@@ -301,6 +301,7 @@ GameObject:
   - component: {fileID: 247699425053732629}
   - component: {fileID: 7882365722553276215}
   - component: {fileID: 317857297019081747}
+  - component: {fileID: 1022893902618594331}
   m_Layer: 0
   m_Name: Caption
   m_TagString: Untagged
@@ -426,6 +427,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1022893902618594331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2656473162867701844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 048a0e2d76dd0834ea2c725168511a14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetText: {fileID: 317857297019081747}
+  normalColor: {r: 0.29, g: 0.56, b: 0.85, a: 1}
+  clickedColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.15
+  tagWindowData: {fileID: 0}
+  profileWindowData: {fileID: 0}
+  defaultWindowData: {fileID: 11400000, guid: 3efb7764c5fc49645942c9353d1b6f1d, type: 2}
+  windowParent: {fileID: 0}
 --- !u!1 &3230786795835146250
 GameObject:
   m_ObjectHideFlags: 0

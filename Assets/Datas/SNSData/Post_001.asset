@@ -15,6 +15,6 @@ MonoBehaviour:
   accountName: user_test
   accountIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   postPhoto: {fileID: -1614409083385094767, guid: 5541e94d6ea0ea54599bbcc8bd5b9f16, type: 3}
-  caption: 'My first post : )'
+  caption: 'My <link="1post">first post</link> : )'
   likeCount: 12
   timeAgo: 2 hour
