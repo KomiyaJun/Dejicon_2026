@@ -344,7 +344,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2435857100618796962}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3339823248186664267}
+        m_TargetAssemblyTypeName: WindowA, Assembly-CSharp
+        m_MethodName: OnClickOpenSubWindow
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3732307143615910950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -458,6 +470,7 @@ MonoBehaviour:
   closeEase: 26
   windowLabelText: {fileID: 7657276265716321706}
   windowLabelImage: {fileID: 1037526542970910403}
+  windowBData: {fileID: 11400000, guid: 4789578288253f54f8fe37c0c87ffad8, type: 2}
 --- !u!114 &694739352349397864
 MonoBehaviour:
   m_ObjectHideFlags: 0
