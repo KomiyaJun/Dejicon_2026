@@ -24,7 +24,7 @@ public class WindowBridge : MonoBehaviour
     }
 
     // ウィンドウを開く処理
-    private void OnOpen()
+    public void OnOpen()
     {
         if (instantiatedWindow == null)    //最初の呼び出しの場合
         {
