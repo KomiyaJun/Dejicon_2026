@@ -38,6 +38,12 @@ public class PostItemView : MonoBehaviour
 
         likeButton.onClick.RemoveAllListeners();
         likeButton.onClick.AddListener(OnLikeButtonClicked);
+
+
+        //ƒŠƒ“ƒN‚ÌF•t‚¯
+        captionText.text = data.caption
+    .Replace("<link=", "<color=#4A90D9><link=")
+    .Replace("</link>", "</link></color>");
     }
 
     private void OnLikeButtonClicked()
