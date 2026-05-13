@@ -4,10 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Xのような投稿一覧UIをUnity上に表示するためのサンプルスクリプトです。
+/// Xのような投稿一覧UIをUnity上に表示するためのスクリプト
 /// 
 /// 特徴:
-/// ・1スクリプトで完結
 /// ・ScrollRectを自動生成
 /// ・投稿本文と画像を表示可能
 /// ・Inspectorから投稿データを設定可能
