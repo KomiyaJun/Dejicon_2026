@@ -9,14 +9,11 @@ using Cysharp.Threading.Tasks;
 //担当者 : 小宮
 public class WindowA : WindowBase
 {
-    protected override async UniTask OnOpen()
+    [SerializeField] private WindowData windowBData;
+
+    // ウィンドウA内にある「Bを開くボタン」から呼ぶ
+    public void OnClickOpenSubWindow()
     {
-        await base.OnOpen();
-        Debug.Log("OnOpen");
-    }
-    protected override async UniTask OnClose()
-    {
-        await base.OnClose();
-        Debug.Log("OnClose");
+        WindowService.Instance?.OpenWindow(windowBData);
     }
 }
