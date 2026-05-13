@@ -1599,6 +1599,7 @@ GameObject:
   - component: {fileID: 1215712240}
   - component: {fileID: 1215712239}
   - component: {fileID: 1215712238}
+  - component: {fileID: 1215712241}
   m_Layer: 5
   m_Name: Image_Dummy
   m_TagString: Untagged
@@ -1707,6 +1708,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215712236}
   m_CullTransparentMesh: 1
+--- !u!114 &1215712241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215712236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb9a4e0a0946f1d449292932f978c48e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  photoButton: {fileID: 1215712238}
+  markerId: Photo_01
+  normalizedPosition: {x: 0.5, y: 0.4}
+  arrowRotationZ: 80
+  removeOnSecondClick: 0
 --- !u!1 &1394676124
 GameObject:
   m_ObjectHideFlags: 0
