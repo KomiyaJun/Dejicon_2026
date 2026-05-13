@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   windowName: Map
   icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  prefab: {fileID: 2243157971763990403, guid: 0820131f1c69b0744a764c6579327319, type: 3}
+  prefab: {fileID: 2243157971763990403, guid: f23a773d6264ddb4780910bce2aaff21, type: 3}
   windowColor: {r: 1, g: 0.252221, b: 0.11764705, a: 1}
