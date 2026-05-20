@@ -309,6 +309,7 @@ MonoBehaviour:
   closeEase: 26
   windowLabelText: {fileID: 7657276265716321706}
   windowLabelImage: {fileID: 1037526542970910403}
+  windowBData: {fileID: 0}
 --- !u!114 &6094952024494334641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,9 +325,9 @@ MonoBehaviour:
   markerLayer: {fileID: 1223923611043733801}
   pinSprite: {fileID: -8060725707266790242, guid: 95a87229aed9c52448e8af0afeb25b0a, type: 3}
   arrowSprite: {fileID: -4346244404228752641, guid: e916bb5c82e9bad4e8b00ee68a77d587, type: 3}
-  pinSize: {x: 36, y: 36}
-  arrowSize: {x: 42, y: 42}
-  arrowDistance: 36
+  pinSize: {x: 54, y: 54}
+  arrowSize: {x: 63, y: 63}
+  arrowDistance: 54
 --- !u!114 &956789160319908468
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+// LinkHandler.cs
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
@@ -24,6 +25,8 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
     [SerializeField] private WindowData mapWindowData;
     // その他用ウィンドウのWindowData
     [SerializeField] private WindowData defaultWindowData;
+    // キーワード活性化までの待機秒数（Inspectorで変更可能）
+    [SerializeField] private float activateDelay = 2.0f;
 
     // ウィンドウを生成する親オブジェクト（Awakeで自動取得）
     private Transform windowParent;
@@ -157,21 +160,50 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
         window.Open();
     }
 
+    // ウィンドウを開いた後にキーワードを活性化するメソッド
+    private void OpenWindowAndActivate(WindowData data, string key)
+    {
+        // まずウィンドウを開く
+        OpenWindow(data);
+
+        // 数秒後にキーワードを活性化するコルーチンを開始
+        StartCoroutine(ActivateAfterDelay(key));
+    }
+
+    // 指定秒数後にキーワードを活性化するコルーチン
+    private IEnumerator ActivateAfterDelay(string key)
+    {
+        // activateDelay 秒待つ
+        yield return new WaitForSeconds(activateDelay);
+
+        // WindowMemo のインスタンスが存在するか確認
+        if (WindowMemo.Instance == null)
+        {
+            Debug.LogWarning("WindowMemo.Instance が見つかりません");
+            yield break;
+        }
+
+        // キーワードを活性化
+        WindowMemo.Instance.ActivateContent(key);
+        Debug.Log($"{key} を活性化しました");
+    }
+
     // リンクIDによってイベントを分岐するメソッド
     private void OnLinkClicked(string linkID)
     {
-        // "memo_" で始まる場合はタグウィンドウを開く
+        // "memo_" で始まる場合はメモウィンドウを開いてキーワードを活性化
         if (linkID.StartsWith("memo_"))
         {
-            string tag = linkID.Replace("memo_", "#");
-            Debug.Log("メモへのジャンプ: " + tag);
-            OpenWindow(memoWindowData);
+            // "memo_" を除いたキーワードを取得
+            string key = linkID.Replace("memo_", "");
+            Debug.Log("メモへのジャンプ: " + key);
+            OpenWindowAndActivate(memoWindowData, key);
         }
-        // "map_" で始まる場合はプロフィールウィンドウを開く
+        // "map_" で始まる場合はマップウィンドウを開く
         else if (linkID.StartsWith("map_"))
         {
-            string user = linkID.Replace("map_", "@");
-            Debug.Log("マップへのジャンプ: " + user);
+            string key = linkID.Replace("map_", "");
+            Debug.Log("マップへのジャンプ: " + key);
             OpenWindow(mapWindowData);
         }
         // それ以外のリンク
