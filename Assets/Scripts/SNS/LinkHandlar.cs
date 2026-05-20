@@ -136,7 +136,14 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
         // キャッシュに存在する場合は再利用する
         if (windowCache.TryGetValue(data, out WindowBase cachedWindow))
         {
-            // 生成済みウィンドウを開く
+            // すでに開いている場合は最前面に移動するだけ
+            if (cachedWindow.gameObject.activeSelf)
+            {
+                cachedWindow.transform.SetAsLastSibling();
+                return;
+            }
+
+            // 閉じている場合は開く
             cachedWindow.Open();
             return;
         }
@@ -151,22 +158,29 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        // ウィンドウのセットアップと表示
         window.SetUpWindow(data);
-
-        // キャッシュに登録して次回以降再利用できるようにする
         windowCache[data] = window;
-
         window.Open();
     }
 
     // ウィンドウを開いた後にキーワードを活性化するメソッド
     private void OpenWindowAndActivate(WindowData data, string key)
     {
-        // まずウィンドウを開く
-        OpenWindow(data);
+        // すでに開いている場合はActivateContentだけ呼ぶ
+        if (windowCache.TryGetValue(data, out WindowBase cachedWindow))
+        {
+            if (cachedWindow.gameObject.activeSelf)
+            {
+                // 最前面に移動
+                cachedWindow.transform.SetAsLastSibling();
+                // すぐにキーワードを活性化
+                StartCoroutine(ActivateAfterDelay(key));
+                return;
+            }
+        }
 
-        // 数秒後にキーワードを活性化するコルーチンを開始
+        // 閉じている場合は開いてからキーワードを活性化
+        OpenWindow(data);
         StartCoroutine(ActivateAfterDelay(key));
     }
 
