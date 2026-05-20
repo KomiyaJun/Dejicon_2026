@@ -18,3 +18,4 @@ MonoBehaviour:
   caption: 'My second post : )'
   likeCount: 12
   timeAgo: 42 sec
+  photoLinkID: memo_Face
