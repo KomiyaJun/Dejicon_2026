@@ -9,14 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/MainScene/Title.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/MainScene/Prologue.unity
-    guid: 8d09b90bc7bd4d24b89de9aad9f18dcb
+
+    path: Assets/Scenes/TestScene/SceneTransitionTest.unity
+    guid: ff6cb5df8ecc526439d37425962b48e1
   - enabled: 1
-    path: Assets/Scenes/MainScene/Game.unity
-    guid: 277f3c9236eb39d4baa44c604930a5ae
-  - enabled: 1
-    path: Assets/Scenes/MainScene/Epilogue.unity
-    guid: f184148532beaa241bdcddd0fa729bf6
+    path: Assets/Scenes/TestScene/WindowTest.unity
+    guid: 6205df2dcc2d57c4f8556e3db49f1d4e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 3590b91b4603b465dbb4216d601bff33, type: 3}
   m_UseUCBPForAssetBundles: 0

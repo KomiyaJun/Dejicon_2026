@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class AnimationObserver : MonoBehaviour
 {
-    public event Action<int> OnScaleRequested;
+    public event Action<float> OnScaleRequested;
     
-    public void TriggerScale(int targetScale)
+    public void TriggerScale(float targetScale)
     {
         OnScaleRequested?.Invoke(targetScale);
     }

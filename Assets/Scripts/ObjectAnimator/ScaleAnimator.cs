@@ -27,13 +27,13 @@ public class ScaleAnimator : MonoBehaviour
         _cts?.Dispose();
     }
 
-    private void HandleScaleRequested(int targetScale)
+    private void HandleScaleRequested(float targetScale)
     {
         // 以前のアニメーションをキャンセルして新しいものに上書き（Fire and Forget）
         ScaleAsync(targetScale).Forget();
     }
 
-    private async UniTaskVoid ScaleAsync(int targetValue)
+    private async UniTaskVoid ScaleAsync(float targetValue)
     {
         // 前回の処理をキャンセルして二重実行を防止
         _cts?.Cancel();
