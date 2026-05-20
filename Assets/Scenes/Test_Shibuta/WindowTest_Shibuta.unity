@@ -842,6 +842,7 @@ GameObject:
   - component: {fileID: 722574020}
   - component: {fileID: 722574019}
   - component: {fileID: 722574018}
+  - component: {fileID: 722574021}
   m_Layer: 5
   m_Name: Text_Dummy
   m_TagString: Untagged
@@ -866,7 +867,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 426, y: 406}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 250, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &722574018
 MonoBehaviour:
@@ -932,7 +933,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u4EEE\u7F6E\u5C0F\u5B66\u6821"
+  m_text: "\u685C\u30F6\u4E18\u5C0F\u5B66\u6821"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f80b1da193eca27418ec7eff49720b19, type: 2}
   m_sharedMaterial: {fileID: -5210807662615304189, guid: f80b1da193eca27418ec7eff49720b19, type: 2}
@@ -1011,6 +1012,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 722574016}
   m_CullTransparentMesh: 1
+--- !u!114 &722574021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722574016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d3eb66ac1afda647aeb4f2f826341b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 722574018}
+  toggleMode: 0
+  waitUntilMapWindowAppears: 0
 --- !u!1 &773000789
 GameObject:
   m_ObjectHideFlags: 0
@@ -1722,8 +1738,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   photoButton: {fileID: 1215712238}
   markerId: Photo_01
-  normalizedPosition: {x: 0.5, y: 0.4}
-  arrowRotationZ: 80
+  normalizedPosition: {x: 0.48, y: 0.5}
+  arrowRotationZ: 70
   removeOnSecondClick: 0
 --- !u!1 &1394676124
 GameObject:
