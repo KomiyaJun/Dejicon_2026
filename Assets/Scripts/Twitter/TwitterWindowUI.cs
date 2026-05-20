@@ -11,9 +11,12 @@ public class TwitterWindowUI : MonoBehaviour
         [Header("投稿者名")]
         public string userName = "User";
         [Header("投稿内容")]
+        [TextArea(3, 10)]
         public string postText = "これは投稿本文です。";
         [Header("投稿画像")]
         public Sprite postImage;
+        [Header("アバターアイコン")]
+        public Sprite avatarIcon;
         [Header("アバターの色")]
         public Color avatarColor = new Color(0.1f, 0.45f, 1f);
     }
@@ -50,18 +53,19 @@ public class TwitterWindowUI : MonoBehaviour
             PostData post = posts[i];
 
             TwitterPostItem item = Instantiate(postPrefab, contentRoot);
-            item.SetUp(post.userName, post.postText, post.postImage, post.avatarColor);
+            item.SetUp(post.userName, post.postText, post.postImage, post.avatarIcon, post.avatarColor);
         }
 
     }
 
-    public void AddPost(String userName, string postText, Sprite postImage = null)
+    public void AddPost(String userName, string postText, Sprite postImage = null, Sprite avatarIcon = null)
     {
         PostData newPost = new PostData
         {
             userName = userName,
             postText = postText,
             postImage = postImage,
+            avatarIcon = avatarIcon,
             avatarColor = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value)
         };
         posts.Add(newPost);
