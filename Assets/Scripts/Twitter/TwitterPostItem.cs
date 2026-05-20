@@ -9,11 +9,20 @@ public class TwitterPostItem : MonoBehaviour
     [SerializeField] private TextMeshProUGUI bodyText;
     [SerializeField] private Image postImage;
 
-    public void SetUp(string userName, string postText, Sprite image, Color avatarColor)
+    public void SetUp(string userName, string postText, Sprite image, Sprite avatarIcon, Color avatarColor)
     {
         if (avatarImage != null)
         {
-            avatarImage.color = avatarColor;
+            if (avatarIcon != null)
+            {
+                avatarImage.sprite = avatarIcon;
+                avatarImage.color = Color.white;
+            }
+            else
+            {
+                avatarImage.sprite = null;
+                avatarImage.color = avatarColor;
+            }
         }
 
         if (userNameText != null)
@@ -22,7 +31,7 @@ public class TwitterPostItem : MonoBehaviour
         }
         if (bodyText != null)
         {
-            bodyText.text = postText;
+            bodyText.text = postText.Replace("\\n", "\n");
         }
 
         if ( postImage != null)
