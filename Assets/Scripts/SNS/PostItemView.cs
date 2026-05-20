@@ -1,4 +1,3 @@
-// PostItemView.cs
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -17,6 +16,7 @@ public class PostItemView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI likeCountText;
     [SerializeField] private TextMeshProUGUI timeAgoText;
     [SerializeField] private Button likeButton;
+    [SerializeField] private TextMeshProUGUI likeButtonText; // 追加
 
     private int currentLikeCount;
     private bool isLiked = false;
@@ -38,12 +38,6 @@ public class PostItemView : MonoBehaviour
 
         likeButton.onClick.RemoveAllListeners();
         likeButton.onClick.AddListener(OnLikeButtonClicked);
-
-
-        //リンクの色付け
-        captionText.text = data.caption
-    .Replace("<link=", "<color=#4A90D9><link=")
-    .Replace("</link>", "</link></color>");
     }
 
     private void OnLikeButtonClicked()
@@ -55,10 +49,10 @@ public class PostItemView : MonoBehaviour
 
     private void UpdateLikeDisplay()
     {
-        likeCountText.text = currentLikeCount.ToString("N0") + " Likes";
+        likeCountText.text = currentLikeCount.ToString("N0") + " いいね！";
 
-        ColorBlock colors = likeButton.colors;
-        colors.normalColor = isLiked ? Color.red : Color.white;
-        likeButton.colors = colors;
+        // 押したら赤いハート、押していないと白いハート
+        likeButtonText.text = isLiked ? "\u2665" : "\u2661";
+        likeButtonText.color = isLiked ? Color.red : Color.black;
     }
 }
