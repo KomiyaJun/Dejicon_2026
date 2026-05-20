@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using System.Collections.Generic;
 
 public class PhotoLinkHandler : MonoBehaviour
 {
@@ -13,9 +12,13 @@ public class PhotoLinkHandler : MonoBehaviour
     [SerializeField] private Color clickedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
 
     [Header("ウィンドウ")]
+    // メモ用ウィンドウのWindowData
     [SerializeField] private WindowData memoWindowData;
+    // マップ用ウィンドウのWindowData
     [SerializeField] private WindowData mapWindowData;
+    // その他用ウィンドウのWindowData
     [SerializeField] private WindowData defaultWindowData;
+    // キーワード活性化までの待機秒数
     [SerializeField] private float activateDelay = 2.0f;
 
     // ウィンドウを生成する親オブジェクト
@@ -23,10 +26,6 @@ public class PhotoLinkHandler : MonoBehaviour
 
     // 画像のImageコンポーネント
     private Image photoImage;
-
-    // ウィンドウキャッシュ
-    private Dictionary<WindowData, WindowBase> windowCache
-        = new Dictionary<WindowData, WindowBase>();
 
     // クリックしたときに発火するリンクID
     private string linkID;
@@ -80,88 +79,28 @@ public class PhotoLinkHandler : MonoBehaviour
         OnLinkClicked(linkID);
     }
 
-    // リンクIDによってウィンドウを開くメソッド
-    private void OnLinkClicked(string id)
-    {
-        if (id.StartsWith("memo_"))
-        {
-            string key = id.Replace("memo_", "");
-            Debug.Log("メモへのジャンプ: " + key);
-            OpenWindowAndActivate(memoWindowData, key);
-        }
-        else if (id.StartsWith("map_"))
-        {
-            string key = id.Replace("map_", "");
-            Debug.Log("マップへのジャンプ: " + key);
-            OpenWindow(mapWindowData);
-        }
-        else
-        {
-            Debug.Log("リンクをクリック: " + id);
-            OpenWindow(defaultWindowData);
-        }
-    }
-
-    // ウィンドウを開くメソッド
     // WindowDataからウィンドウを開くメソッド
     private void OpenWindow(WindowData data)
     {
-        if (data == null)
+        if (WindowCache.Instance == null)
         {
-            Debug.LogWarning("WindowDataがアサインされていません");
+            Debug.LogWarning("WindowCacheが見つかりません");
             return;
         }
 
-        if (windowParent == null)
-        {
-            Debug.LogWarning("Window_Parentが見つかりません");
-            return;
-        }
-
-        // キャッシュに存在する場合は再利用する
-        if (windowCache.TryGetValue(data, out WindowBase cachedWindow))
-        {
-            // すでに開いている場合は最前面に移動するだけ
-            if (cachedWindow.gameObject.activeSelf)
-            {
-                cachedWindow.transform.SetAsLastSibling();
-                return;
-            }
-
-            // 閉じている場合は開く
-            cachedWindow.Open();
-            return;
-        }
-
-        // キャッシュにない場合は新規生成する
-        GameObject obj = Instantiate(data.prefab, windowParent);
-        WindowBase window = obj.GetComponent<WindowBase>();
-
-        if (window == null)
-        {
-            Debug.LogError($"{data.prefab.name}にWindowBaseがアタッチされていません");
-            return;
-        }
-
-        window.SetUpWindow(data);
-        windowCache[data] = window;
-        window.Open();
+        WindowCache.Instance.OpenWindow(data, windowParent);
     }
 
     // ウィンドウを開いた後にキーワードを活性化するメソッド
     private void OpenWindowAndActivate(WindowData data, string key)
     {
         // すでに開いている場合はActivateContentだけ呼ぶ
-        if (windowCache.TryGetValue(data, out WindowBase cachedWindow))
+        if (WindowCache.Instance != null && WindowCache.Instance.IsOpen(data))
         {
-            if (cachedWindow.gameObject.activeSelf)
-            {
-                // 最前面に移動
-                cachedWindow.transform.SetAsLastSibling();
-                // すぐにキーワードを活性化
-                StartCoroutine(ActivateAfterDelay(key));
-                return;
-            }
+            WindowBase window = WindowCache.Instance.GetWindow(data);
+            window?.transform.SetAsLastSibling();
+            StartCoroutine(ActivateAfterDelay(key));
+            return;
         }
 
         // 閉じている場合は開いてからキーワードを活性化
@@ -172,15 +111,43 @@ public class PhotoLinkHandler : MonoBehaviour
     // 指定秒数後にキーワードを活性化するコルーチン
     private IEnumerator ActivateAfterDelay(string key)
     {
+        // activateDelay 秒待つ
         yield return new WaitForSeconds(activateDelay);
 
+        // WindowMemo のインスタンスが存在するか確認
         if (WindowMemo.Instance == null)
         {
             Debug.LogWarning("WindowMemo.Instance が見つかりません");
             yield break;
         }
 
+        // キーワードを活性化
         WindowMemo.Instance.ActivateContent(key);
         Debug.Log($"{key} を活性化しました");
+    }
+
+    // リンクIDによってウィンドウを開くメソッド
+    private void OnLinkClicked(string id)
+    {
+        // "memo_" で始まる場合はメモウィンドウを開いてキーワードを活性化
+        if (id.StartsWith("memo_"))
+        {
+            string key = id.Replace("memo_", "");
+            Debug.Log("メモへのジャンプ: " + key);
+            OpenWindowAndActivate(memoWindowData, key);
+        }
+        // "map_" で始まる場合はマップウィンドウを開く
+        else if (id.StartsWith("map_"))
+        {
+            string key = id.Replace("map_", "");
+            Debug.Log("マップへのジャンプ: " + key);
+            OpenWindow(mapWindowData);
+        }
+        // それ以外のリンク
+        else
+        {
+            Debug.Log("リンクをクリック: " + id);
+            OpenWindow(defaultWindowData);
+        }
     }
 }

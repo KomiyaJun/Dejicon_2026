@@ -25,28 +25,20 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
     [SerializeField] private WindowData mapWindowData;
     // その他用ウィンドウのWindowData
     [SerializeField] private WindowData defaultWindowData;
-    // キーワード活性化までの待機秒数（Inspectorで変更可能）
+    // キーワード活性化までの待機秒数
     [SerializeField] private float activateDelay = 2.0f;
 
     // ウィンドウを生成する親オブジェクト（Awakeで自動取得）
     private Transform windowParent;
 
-    // WindowDataをキーにして生成済みウィンドウを管理する辞書
-    // 2回目以降は同じインスタンスを再利用する
-    private Dictionary<WindowData, WindowBase> windowCache
-        = new Dictionary<WindowData, WindowBase>();
-
     private void Awake()
     {
         // Window_Parentを名前で自動取得する
-        if (windowParent == null)
-        {
-            GameObject obj = GameObject.Find("Window_Parent");
-            if (obj != null)
-                windowParent = obj.transform;
-            else
-                Debug.LogWarning("Window_Parentが見つかりません");
-        }
+        GameObject obj = GameObject.Find("Window_Parent");
+        if (obj != null)
+            windowParent = obj.transform;
+        else
+            Debug.LogWarning("Window_Parentが見つかりません");
     }
 
     // uGUIからクリックイベントが呼ばれる
@@ -121,62 +113,25 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
     // WindowDataからウィンドウを開くメソッド
     private void OpenWindow(WindowData data)
     {
-        if (data == null)
+        if (WindowCache.Instance == null)
         {
-            Debug.LogWarning("WindowDataがアサインされていません");
+            Debug.LogWarning("WindowCacheが見つかりません");
             return;
         }
 
-        if (windowParent == null)
-        {
-            Debug.LogWarning("Window_Parentが見つかりません");
-            return;
-        }
-
-        // キャッシュに存在する場合は再利用する
-        if (windowCache.TryGetValue(data, out WindowBase cachedWindow))
-        {
-            // すでに開いている場合は最前面に移動するだけ
-            if (cachedWindow.gameObject.activeSelf)
-            {
-                cachedWindow.transform.SetAsLastSibling();
-                return;
-            }
-
-            // 閉じている場合は開く
-            cachedWindow.Open();
-            return;
-        }
-
-        // キャッシュにない場合は新規生成する
-        GameObject obj = Instantiate(data.prefab, windowParent);
-        WindowBase window = obj.GetComponent<WindowBase>();
-
-        if (window == null)
-        {
-            Debug.LogError($"{data.prefab.name}にWindowBaseがアタッチされていません");
-            return;
-        }
-
-        window.SetUpWindow(data);
-        windowCache[data] = window;
-        window.Open();
+        WindowCache.Instance.OpenWindow(data, windowParent);
     }
 
     // ウィンドウを開いた後にキーワードを活性化するメソッド
     private void OpenWindowAndActivate(WindowData data, string key)
     {
         // すでに開いている場合はActivateContentだけ呼ぶ
-        if (windowCache.TryGetValue(data, out WindowBase cachedWindow))
+        if (WindowCache.Instance != null && WindowCache.Instance.IsOpen(data))
         {
-            if (cachedWindow.gameObject.activeSelf)
-            {
-                // 最前面に移動
-                cachedWindow.transform.SetAsLastSibling();
-                // すぐにキーワードを活性化
-                StartCoroutine(ActivateAfterDelay(key));
-                return;
-            }
+            WindowBase window = WindowCache.Instance.GetWindow(data);
+            window?.transform.SetAsLastSibling();
+            StartCoroutine(ActivateAfterDelay(key));
+            return;
         }
 
         // 閉じている場合は開いてからキーワードを活性化
@@ -208,7 +163,6 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
         // "memo_" で始まる場合はメモウィンドウを開いてキーワードを活性化
         if (linkID.StartsWith("memo_"))
         {
-            // "memo_" を除いたキーワードを取得
             string key = linkID.Replace("memo_", "");
             Debug.Log("メモへのジャンプ: " + key);
             OpenWindowAndActivate(memoWindowData, key);
