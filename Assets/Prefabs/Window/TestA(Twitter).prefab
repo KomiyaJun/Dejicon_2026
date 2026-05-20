@@ -1112,11 +1112,10 @@ MonoBehaviour:
     postText: "\u30C6\u30B9\u30C8\u6295\u7A3F\u3067\u3059"
     postImage: {fileID: 0}
     avatarColor: {r: 1, g: 0.5641509, b: 0.96068126, a: 1}
-  - userName: TestUser
-    postText: "\u30C6\u30B9\u30C8\u6295\u7A3F\u3067\u3059"
+  - userName: "\u307F\u3086\U0001F380"
+    postText: "\u521D\u6295\u7A3F\U0001F380"
     postImage: {fileID: 0}
     avatarColor: {r: 1, g: 0.5641509, b: 0.96068126, a: 1}
-  scrollRect: {fileID: 4404894430991632650}
 --- !u!1 &8416089422772829336
 GameObject:
   m_ObjectHideFlags: 0
