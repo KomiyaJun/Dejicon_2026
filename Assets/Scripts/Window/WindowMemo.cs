@@ -19,21 +19,26 @@ public class WindowMemo : WindowBase
 
     protected override async UniTask OnOpen()
     {
-        Instance = this; // インスタンスを登録
+        Instance = this;
+
+        // アニメーション前に全オブジェクトを非表示にする
+        foreach (var setting in _keywordSettings)
+        {
+            if (setting.targetObj != null)
+                setting.targetObj.SetActive(false);
+        }
+
+        // アニメーション完了を待つ
         await base.OnOpen();
 
-        // 開いた時に、データマネージャーを確認して既に開放済みのものを表示する
+        // アニメーション後に解放済みのものだけ表示する
         if (GameDataManager.Instance != null)
         {
             foreach (var setting in _keywordSettings)
             {
                 bool isUnlocked = GameDataManager.Instance.IsUnlocked(setting.keyword);
-
-                // 【修正！】targetObj を使用
                 if (setting.targetObj != null)
-                {
                     setting.targetObj.SetActive(isUnlocked);
-                }
             }
         }
     }
@@ -41,15 +46,26 @@ public class WindowMemo : WindowBase
     // キーワードを活性化（表示）するメソッド
     public void ActivateContent(string key)
     {
-        // 該当するキーワード設定を探す
         var setting = _keywordSettings.FirstOrDefault(s => s.keyword == key);
 
-        // 【修正！】targetObj を使用
         if (setting.targetObj != null)
         {
-            setting.targetObj.SetActive(true); // オブジェクトを表示
-            GameDataManager.Instance.Unlock(key); // データに保存
-            Debug.Log($"{key} を活性化しました");
+            setting.targetObj.SetActive(true);
+
+            // GameDataManager が存在する場合のみ保存する
+            if (GameDataManager.Instance != null)
+            {
+                GameDataManager.Instance.Unlock(key);
+                Debug.Log($"{key} を活性化しました");
+            }
+            else
+            {
+                Debug.LogWarning("GameDataManager.Instance が見つかりません");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"{key} に対応するオブジェクトが見つかりません");
         }
     }
 
