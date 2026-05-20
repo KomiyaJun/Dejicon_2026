@@ -469,9 +469,9 @@ MonoBehaviour:
   normalColor: {r: 0.29, g: 0.56, b: 0.85, a: 1}
   clickedColor: {r: 1, g: 1, b: 1, a: 1}
   flashDuration: 0.15
-  memoWindowData: {fileID: 11400000, guid: 4789578288253f54f8fe37c0c87ffad8, type: 2}
-  mapWindowData: {fileID: 11400000, guid: 3efb7764c5fc49645942c9353d1b6f1d, type: 2}
-  defaultWindowData: {fileID: 0}
+  tagWindowData: {fileID: 0}
+  profileWindowData: {fileID: 0}
+  defaultWindowData: {fileID: 11400000, guid: 4789578288253f54f8fe37c0c87ffad8, type: 2}
 --- !u!114 &8340282729830486637
 MonoBehaviour:
   m_ObjectHideFlags: 0

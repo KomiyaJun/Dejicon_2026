@@ -19,9 +19,9 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
 
     [Header("ウィンドウ")]
     // タグ用ウィンドウのWindowData
-    [SerializeField] private WindowData memoWindowData;
+    [SerializeField] private WindowData tagWindowData;
     // プロフィール用ウィンドウのWindowData
-    [SerializeField] private WindowData mapWindowData;
+    [SerializeField] private WindowData profileWindowData;
     // その他用ウィンドウのWindowData
     [SerializeField] private WindowData defaultWindowData;
 
@@ -160,19 +160,19 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
     // リンクIDによってイベントを分岐するメソッド
     private void OnLinkClicked(string linkID)
     {
-        // "memo_" で始まる場合はタグウィンドウを開く
-        if (linkID.StartsWith("memo_"))
+        // "tag_" で始まる場合はタグウィンドウを開く
+        if (linkID.StartsWith("tag_"))
         {
-            string tag = linkID.Replace("memo_", "#");
-            Debug.Log("メモへのジャンプ: " + tag);
-            OpenWindow(memoWindowData);
+            string tag = linkID.Replace("tag_", "#");
+            Debug.Log("タグをクリック: " + tag);
+            OpenWindow(tagWindowData);
         }
         // "profile_" で始まる場合はプロフィールウィンドウを開く
-        else if (linkID.StartsWith("map_"))
+        else if (linkID.StartsWith("profile_"))
         {
-            string user = linkID.Replace("map_", "@");
-            Debug.Log("マップへのジャンプ: " + user);
-            OpenWindow(mapWindowData);
+            string user = linkID.Replace("profile_", "@");
+            Debug.Log("プロフィールをクリック: " + user);
+            OpenWindow(profileWindowData);
         }
         // それ以外のリンク
         else
