@@ -19,6 +19,10 @@ public class TwitterWindowUI : MonoBehaviour
         public Sprite avatarIcon;
         [Header("アバターの色")]
         public Color avatarColor = new Color(0.1f, 0.45f, 1f);
+        [Header("いいね数")]
+        public int likeCount;
+        [Header("投稿日時")]
+        public string postTime = "7時間";
     }
 
     [Header("投稿用content")]
@@ -53,7 +57,7 @@ public class TwitterWindowUI : MonoBehaviour
             PostData post = posts[i];
 
             TwitterPostItem item = Instantiate(postPrefab, contentRoot);
-            item.SetUp(post.userName, post.postText, post.postImage, post.avatarIcon, post.avatarColor);
+            item.SetUp(post.userName, post.postText, post.postImage, post.avatarIcon, post.avatarColor, post.likeCount, post.postTime);
         }
 
     }
