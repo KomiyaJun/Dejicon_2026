@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7f2dc5c207f89f4cbb978409024442a, type: 3}
   m_Name: Slide_01
   m_EditorClassIdentifier: 
-  image: {fileID: -1614409083385094767, guid: 5541e94d6ea0ea54599bbcc8bd5b9f16, type: 3}
-  text: aaaaaaaaaaaaaaaaaaaaaaa
+  backgroundImage: {fileID: 7640709075046778083, guid: 083ab59e53322a14096e46f0055ada31, type: 3}
+  lines:
+  - "\u4ECA\u65E5\u3082\u304B\u308F\u3044\u3044\u5B50\u3044\u306A\u3044\u304B\u306A\uFF5E\u3002"
+  - ...............
+  - ....................
+  - ................................
+  - "\u3046\u308F\u3001\u304B\u308F\u3044\u3044\u306A\u3053\u306E\u5B50\u3002   \u9854\u5199\u771F\u306A\u3093\u3066\u4E0A\u3052\u3061\u3083\u3063\u3066"
+  - ".........................\u30DC\u30AF\u304C\u6CE8\u610F\u3057\u306A\u3044\u3068\u3002"
   textSpeed: 30
-  autoAdvanceDelay: 0
   bgm: {fileID: 0}

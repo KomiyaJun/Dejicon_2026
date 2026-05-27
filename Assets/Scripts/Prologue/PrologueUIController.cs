@@ -14,13 +14,13 @@ public class PrologueUIController : MonoBehaviour
     // ─────────────────────────────────────────
 
     [Header("UI References")]
-    [SerializeField] private Image slideImage;
-    [SerializeField] private TextMeshProUGUI slideText;
-    [SerializeField] private GameObject skipHintObject;
+    [SerializeField] private Image backgroundImage; // 背景画像（1枚）
+    [SerializeField] private TextMeshProUGUI lineText;        // セリフテキスト
+    [SerializeField] private GameObject skipHintObject;  // 「クリックで次へ」ヒント
 
     [Header("Fade Settings")]
-    [SerializeField] private float imageFadeDuration = 0.8f;
-    [SerializeField] private float textFadeDuration = 0.5f;
+    [SerializeField] private float imageFadeInDuration = 1.2f; // 背景フェードイン時間
+    [SerializeField] private float textFadeDuration = 0.3f; // テキスト切り替えフェード時間
 
     [Header("Skip Hint Blink Settings")]
     [SerializeField, Range(0f, 1f)] private float blinkAlphaMin = 0.1f;
@@ -34,7 +34,7 @@ public class PrologueUIController : MonoBehaviour
     private TextMeshProUGUI skipHintText;
     private Coroutine blinkCoroutine;
 
-    // タイピング中かどうかを外部から参照できるフラグ
+    /// <summary>タイピング中かどうかを PrologueManager から参照するフラグ</summary>
     public bool IsTyping { get; private set; } = false;
 
     // ─────────────────────────────────────────
@@ -46,49 +46,47 @@ public class PrologueUIController : MonoBehaviour
         if (skipHintObject != null)
             skipHintText = skipHintObject.GetComponentInChildren<TextMeshProUGUI>();
 
-        // 初期状態
         SetSkipHint(false);
         SetImageAlpha(0f);
         SetTextAlpha(0f);
     }
 
     // ─────────────────────────────────────────
-    // Public API : 画像
+    // Public API : 背景画像
     // ─────────────────────────────────────────
 
-    /// <summary>画像をクロスフェードで切り替える</summary>
-    public IEnumerator CrossFadeImage(Sprite newSprite)
+    /// <summary>背景画像をセットしてフェードインする（プロローグ開始時に1回だけ呼ぶ）</summary>
+    public IEnumerator ShowBackground(Sprite sprite)
     {
-        if (slideImage == null) yield break;
-
-        if (slideImage.color.a > 0f)
-            yield return StartCoroutine(FadeImage(1f, 0f, imageFadeDuration));
-
-        slideImage.sprite = newSprite;
-        yield return StartCoroutine(FadeImage(0f, 1f, imageFadeDuration));
+        if (backgroundImage == null) yield break;
+        backgroundImage.sprite = sprite;
+        yield return StartCoroutine(FadeImage(0f, 1f, imageFadeInDuration));
     }
 
     // ─────────────────────────────────────────
-    // Public API : テキスト
+    // Public API : テキスト行
     // ─────────────────────────────────────────
 
     /// <summary>
-    /// テキストをタイプライター形式で表示する。
+    /// 新しいセリフ行をタイプライター形式で表示する。
     /// 完了したら IsTyping = false になる。
     /// </summary>
-    public IEnumerator PlayTyping(string fullText, float speed)
+    public IEnumerator PlayLine(string line, float speed)
     {
-        slideText.text = string.Empty;
+        // 前のテキストをフェードアウト
+        yield return StartCoroutine(FadeText(lineText.alpha, 0f, textFadeDuration));
+
+        lineText.text = string.Empty;
         IsTyping = true;
 
         // テキストをフェードイン
-        yield return StartCoroutine(FadeText(0f, 1f, textFadeDuration * 0.5f));
+        yield return StartCoroutine(FadeText(0f, 1f, textFadeDuration));
 
         // 1文字ずつ表示
         float interval = 1f / Mathf.Max(speed, 0.01f);
-        foreach (char c in fullText)
+        foreach (char c in line)
         {
-            slideText.text += c;
+            lineText.text += c;
             yield return new WaitForSeconds(interval);
         }
 
@@ -96,23 +94,23 @@ public class PrologueUIController : MonoBehaviour
     }
 
     /// <summary>タイピングを中断して全文を即時表示する</summary>
-    public void CompleteTyping(string fullText)
+    public void CompleteLine(string fullLine)
     {
         StopAllCoroutines();
         blinkCoroutine = null;
         IsTyping = false;
 
-        slideText.text = fullText;
+        lineText.text = fullLine;
         SetTextAlpha(1f);
-        SetSkipHint(false); // 一瞬消してから再表示させる（Manager側でShowSkipHintを呼ぶ）
+        SetSkipHint(false); // Manager 側で ShowSkipHint を呼ぶ
     }
 
-    /// <summary>テキストとヒントをリセットする（次スライド準備）</summary>
-    public void ResetText()
+    /// <summary>テキストをリセットする（次行の準備）</summary>
+    public void ResetLine()
     {
         SetSkipHint(false);
         SetTextAlpha(0f);
-        slideText.text = string.Empty;
+        lineText.text = string.Empty;
         IsTyping = false;
     }
 
@@ -120,17 +118,8 @@ public class PrologueUIController : MonoBehaviour
     // Public API : Skip Hint
     // ─────────────────────────────────────────
 
-    /// <summary>「クリックで次へ」ヒントを点滅表示する</summary>
-    public void ShowSkipHint()
-    {
-        SetSkipHint(true);
-    }
-
-    /// <summary>「クリックで次へ」ヒントを非表示にする</summary>
-    public void HideSkipHint()
-    {
-        SetSkipHint(false);
-    }
+    public void ShowSkipHint() => SetSkipHint(true);
+    public void HideSkipHint() => SetSkipHint(false);
 
     // ─────────────────────────────────────────
     // Private : Image
@@ -150,10 +139,10 @@ public class PrologueUIController : MonoBehaviour
 
     private void SetImageAlpha(float alpha)
     {
-        if (slideImage == null) return;
-        Color c = slideImage.color;
+        if (backgroundImage == null) return;
+        Color c = backgroundImage.color;
         c.a = alpha;
-        slideImage.color = c;
+        backgroundImage.color = c;
     }
 
     // ─────────────────────────────────────────
@@ -162,7 +151,7 @@ public class PrologueUIController : MonoBehaviour
 
     private IEnumerator FadeText(float from, float to, float duration)
     {
-        if (slideText == null) yield break;
+        if (lineText == null) yield break;
         float elapsed = 0f;
         while (elapsed < duration)
         {
@@ -175,8 +164,8 @@ public class PrologueUIController : MonoBehaviour
 
     private void SetTextAlpha(float alpha)
     {
-        if (slideText == null) return;
-        slideText.alpha = alpha;
+        if (lineText == null) return;
+        lineText.alpha = alpha;
     }
 
     // ─────────────────────────────────────────

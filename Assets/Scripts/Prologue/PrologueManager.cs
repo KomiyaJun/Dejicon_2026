@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// プロローグシーン全体を管理するクラス。
-/// スライドの状態を enum で厳密に管理し、入力の判断をここに集約する。
+/// 背景画像を1回表示し、セリフ行をクリック/エンターで順送りする。
 /// </summary>
 public class PrologueManager : MonoBehaviour
 {
@@ -12,8 +12,8 @@ public class PrologueManager : MonoBehaviour
     // Inspector 設定
     // ─────────────────────────────────────────
 
-    [Header("Slides")]
-    [SerializeField] private PrologueSlideData[] slides;
+    [Header("Slide Data")]
+    [SerializeField] private PrologueSlideData slideData; // スライドデータ（1つ）
 
     [Header("Scene")]
     [SerializeField] private string gameSceneName = "GameScene";
@@ -23,21 +23,20 @@ public class PrologueManager : MonoBehaviour
     [SerializeField] private float bgmFadeDuration = 1.0f;
 
     [Header("Skip")]
-    [Tooltip("クリック / タップでスライドをスキップできるか")]
+    [Tooltip("クリック / エンターキーでセリフを送れるか")]
     [SerializeField] private bool allowSkip = true;
-    [Tooltip("Esc キーでプロローグ全体をスキップして GameScene に飛ぶか")]
+    [Tooltip("Esc キーでプロローグ全体をスキップして GameScene へ飛ぶか")]
     [SerializeField] private bool allowFullSkip = true;
 
     // ─────────────────────────────────────────
-    // スライドの状態
+    // 行の状態
     // ─────────────────────────────────────────
 
-    private enum SlideState
+    private enum LineState
     {
-        None,           // 初期 / 処理なし
-        ImageFading,    // 画像フェード中（入力を受け付けない）
-        Typing,         // テキスト送り中（クリックで全文表示）
-        WaitingForNext, // 全文表示済み・次クリック待ち（クリックで次スライドへ）
+        ImageFading,    // 背景フェード中（入力を受け付けない）
+        Typing,         // タイピング中（入力で全文表示）
+        WaitingForNext, // 全文表示済み・次入力待ち
     }
 
     // ─────────────────────────────────────────
@@ -45,14 +44,10 @@ public class PrologueManager : MonoBehaviour
     // ─────────────────────────────────────────
 
     private PrologueUIController uiController;
-    private SlideState slideState = SlideState.None;
+    private LineState lineState = LineState.ImageFading;
     private bool isTransitioning = false;
-
-    // クリック入力をフレーム跨ぎで安全に受け取るフラグ
-    private bool clickConsumed = false;
-
-    // 現在のスライドデータ（CompleteTyping 時に全文を渡すために保持）
-    private PrologueSlideData currentSlide;
+    private bool inputReceived = false; // クリック or エンターの入力フラグ
+    private string currentLine = string.Empty;
 
     // ─────────────────────────────────────────
     // Unity Lifecycle
@@ -81,9 +76,13 @@ public class PrologueManager : MonoBehaviour
             return;
         }
 
-        // クリック入力を記録（消費は RunPrologue 側で行う）
-        if (allowSkip && Input.GetMouseButtonDown(0))
-            clickConsumed = true;
+        // クリック or エンターキーで入力フラグを立てる
+        // ※ ImageFading 中は Update で記録しても RunPrologue 側で無視する
+        if (allowSkip &&
+            (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)))
+        {
+            inputReceived = true;
+        }
     }
 
     // ─────────────────────────────────────────
@@ -92,72 +91,74 @@ public class PrologueManager : MonoBehaviour
 
     private IEnumerator RunPrologue()
     {
+        if (slideData == null)
+        {
+            Debug.LogError("[PrologueManager] SlideData がアサインされていません。");
+            yield break;
+        }
+
+        // タイトルからのフェードイン
         if (FadeManager.Instance != null)
             yield return StartCoroutine(FadeManager.Instance.FadeIn());
 
-        for (int i = 0; i < slides.Length; i++)
+        // BGM 再生
+        HandleBGM(slideData.bgm);
+
+        // ── 1. 背景画像をフェードイン（1回だけ）──────
+        lineState = LineState.ImageFading;
+        yield return StartCoroutine(uiController.ShowBackground(slideData.backgroundImage));
+
+        // 背景フェード中の誤入力を破棄
+        inputReceived = false;
+
+        // ── 2. セリフ行を順送り ──────────────────────
+        string[] lines = slideData.lines;
+        for (int i = 0; i < lines.Length; i++)
         {
             if (isTransitioning) yield break;
 
-            currentSlide = slides[i];
-            clickConsumed = false;
+            currentLine = lines[i];
+            inputReceived = false;
 
-            HandleBGM(currentSlide.bgm);
-
-            // ── 1. 画像フェード ──────────────────────
-            slideState = SlideState.ImageFading;
-            uiController.ResetText();
-            yield return StartCoroutine(uiController.CrossFadeImage(currentSlide.image));
-
-            // ── 2. テキスト送り ──────────────────────
-            slideState = SlideState.Typing;
-            clickConsumed = false; // 画像フェード中の誤クリックを破棄
-
+            // タイピング開始
+            lineState = LineState.Typing;
             Coroutine typingCoroutine = StartCoroutine(
-                uiController.PlayTyping(currentSlide.text, currentSlide.textSpeed));
+                uiController.PlayLine(currentLine, slideData.textSpeed));
 
-            // タイピング完了 or クリックを待つ
+            // タイピング完了 or 入力を待つ
             while (uiController.IsTyping)
             {
-                if (clickConsumed)
+                if (inputReceived)
                 {
-                    clickConsumed = false;
-                    // タイピング中断 → 全文即時表示
+                    inputReceived = false;
                     StopCoroutine(typingCoroutine);
-                    uiController.CompleteTyping(currentSlide.text);
+                    uiController.CompleteLine(currentLine);
                     break;
                 }
                 yield return null;
             }
 
-            // ── 3. 全文表示済み・次クリック待ち ──────
-            slideState = SlideState.WaitingForNext;
-            clickConsumed = false; // タイピング完了直後の誤クリックを破棄
+            // 全文表示済み・次入力待ち
+            lineState = LineState.WaitingForNext;
+            inputReceived = false; // タイピング完了直後の誤入力を破棄
             uiController.ShowSkipHint();
 
-            // 自動進行 or クリック待ち
-            if (currentSlide.autoAdvanceDelay > 0f)
-            {
-                yield return new WaitForSeconds(currentSlide.autoAdvanceDelay);
-            }
-            else
-            {
-                yield return StartCoroutine(WaitForClick());
-            }
+            yield return StartCoroutine(WaitForInput());
 
             uiController.HideSkipHint();
         }
 
+        // 全セリフ終了 → GameScene へ
         yield return StartCoroutine(EndPrologue());
     }
 
-    /// <summary>クリックが来るまで待つ。isTransitioning になったら即抜ける。</summary>
-    private IEnumerator WaitForClick()
+    /// <summary>クリック / エンターが来るまで待つ</summary>
+    private IEnumerator WaitForInput()
     {
-        clickConsumed = false;
-        while (!clickConsumed && !isTransitioning)
+        inputReceived = false;
+        while (!inputReceived && !isTransitioning)
             yield return null;
-        clickConsumed = false;
+        inputReceived = false;
     }
 
     // ─────────────────────────────────────────
@@ -182,12 +183,10 @@ public class PrologueManager : MonoBehaviour
     // BGM
     // ─────────────────────────────────────────
 
-    private void HandleBGM(AudioClip newClip)
+    private void HandleBGM(AudioClip clip)
     {
-        if (bgmSource == null || newClip == null) return;
-        if (bgmSource.clip == newClip && bgmSource.isPlaying) return;
-
-        bgmSource.clip = newClip;
+        if (bgmSource == null || clip == null) return;
+        bgmSource.clip = clip;
         bgmSource.loop = true;
         bgmSource.Play();
     }
