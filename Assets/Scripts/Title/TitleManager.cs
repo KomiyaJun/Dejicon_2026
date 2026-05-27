@@ -1,10 +1,12 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 /// <summary>
 /// タイトル画面全体を管理するクラス。
-/// BGMの再生、シーン遷移（フェード付き）を担当する。
+/// BGMの再生、背景画像のフェードイン、シーン遷移（フェード付き）を担当する。
+/// ※ タイトルテキスト「断片」は背景画像に描き込み済みのため、Textオブジェクト不要。
 /// </summary>
 public class TitleManager : MonoBehaviour
 {
@@ -13,16 +15,23 @@ public class TitleManager : MonoBehaviour
     // ─────────────────────────────────────────
 
     [Header("Scene Names")]
-    [SerializeField] private string prologueSceneName = "Prologue"; // プロローグシーン名
-    [SerializeField] private string creditSceneName   = "Credit";   // クレジットシーン名
+    [SerializeField] private string prologueSceneName = "PrologueScene";
+    [SerializeField] private string creditSceneName = "CreditScene";
+
+    [Header("Background")]
+    [SerializeField] private Image backgroundImage;
+    [SerializeField] private float bgFadeInDuration = 2.0f;
 
     [Header("BGM")]
-    [SerializeField] private AudioSource bgmSource;   // BGM用AudioSource
-    [SerializeField] private AudioClip  bgmClip;      // タイトルBGM
+    [SerializeField] private AudioSource bgmSource;
+    [SerializeField] private AudioClip bgmClip;
 
     [Header("Fade")]
-    [SerializeField] private float fadeOutDuration = 1.0f;
-    [SerializeField] private float fadeInDuration  = 1.0f;
+    [SerializeField] private float fadeOutDuration = 1.5f;
+    [SerializeField] private float fadeInDuration = 1.0f;
+
+    // TitleUIController に「背景フェードイン完了」を通知するためのイベント
+    public event System.Action OnOpeningCompleted;
 
     // ─────────────────────────────────────────
     // Unity Lifecycle
@@ -30,8 +39,9 @@ public class TitleManager : MonoBehaviour
 
     private void Start()
     {
+        SetBackgroundAlpha(0f);
         PlayBGM();
-        StartCoroutine(OpeningFadeIn());
+        StartCoroutine(OpeningSequence());
     }
 
     // ─────────────────────────────────────────
@@ -41,13 +51,13 @@ public class TitleManager : MonoBehaviour
     /// <summary>ゲームスタート：フェードしてプロローグへ</summary>
     public void OnStartGame()
     {
-        StartCoroutine(TransitionToPrologue());
+        StartCoroutine(FadeOutAndLoad(prologueSceneName));
     }
 
     /// <summary>クレジット画面へ</summary>
     public void OnCredit()
     {
-        StartCoroutine(TransitionToScene(creditSceneName));
+        StartCoroutine(FadeOutAndLoad(creditSceneName));
     }
 
     /// <summary>ゲーム終了</summary>
@@ -64,35 +74,60 @@ public class TitleManager : MonoBehaviour
     // Private Coroutines
     // ─────────────────────────────────────────
 
-    /// <summary>タイトル表示時のフェードイン</summary>
-    private IEnumerator OpeningFadeIn()
+    /// <summary>
+    /// オープニング演出：背景フェードイン完了後に
+    /// TitleUIController へ「Press Any Key」フェーズ開始を通知する。
+    /// </summary>
+    private IEnumerator OpeningSequence()
     {
+        // 画面フェードイン（黒→透明）と背景画像フェードインを並行実行
+        StartCoroutine(FadeBackground(0f, 1f, bgFadeInDuration));
+
         if (FadeManager.Instance != null)
             yield return StartCoroutine(FadeManager.Instance.FadeIn(fadeInDuration));
-    }
 
-    /// <summary>プロローグシーンへフェード遷移</summary>
-    private IEnumerator TransitionToPrologue()
-    {
-        yield return StartCoroutine(FadeOutAndLoad(prologueSceneName));
-    }
+        // 背景フェードインの残り時間を待つ
+        float remaining = bgFadeInDuration - fadeInDuration;
+        if (remaining > 0f)
+            yield return new WaitForSeconds(remaining);
 
-    /// <summary>任意シーンへフェード遷移</summary>
-    private IEnumerator TransitionToScene(string sceneName)
-    {
-        yield return StartCoroutine(FadeOutAndLoad(sceneName));
+        // UIController に完了を通知 → PressAnyKey フェーズへ
+        OnOpeningCompleted?.Invoke();
     }
 
     /// <summary>フェードアウト → シーンロード</summary>
     private IEnumerator FadeOutAndLoad(string sceneName)
     {
-        // BGMをフェードアウトと同時に暗転
         StartCoroutine(FadeBGM(fadeOutDuration));
 
         if (FadeManager.Instance != null)
             yield return StartCoroutine(FadeManager.Instance.FadeOut(fadeOutDuration));
 
         SceneManager.LoadScene(sceneName);
+    }
+
+    // ─────────────────────────────────────────
+    // Background
+    // ─────────────────────────────────────────
+
+    private IEnumerator FadeBackground(float from, float to, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            SetBackgroundAlpha(Mathf.Lerp(from, to, elapsed / duration));
+            yield return null;
+        }
+        SetBackgroundAlpha(to);
+    }
+
+    private void SetBackgroundAlpha(float alpha)
+    {
+        if (backgroundImage == null) return;
+        Color c = backgroundImage.color;
+        c.a = alpha;
+        backgroundImage.color = c;
     }
 
     // ─────────────────────────────────────────
@@ -122,6 +157,6 @@ public class TitleManager : MonoBehaviour
         }
 
         bgmSource.Stop();
-        bgmSource.volume = startVolume; // 次回のために戻しておく
+        bgmSource.volume = startVolume;
     }
 }
