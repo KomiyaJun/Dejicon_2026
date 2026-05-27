@@ -11,6 +11,8 @@ public class PostItemView : MonoBehaviour
     [Header("投稿部分")]
     [SerializeField] private Image postPhotoImage;
     [SerializeField] private TextMeshProUGUI captionText;
+    [SerializeField] private Button postPhotoButton;
+    [SerializeField] private PhotoLinkHandler photoLinkHandler; 
 
     [Header("エンゲージメント")]
     [SerializeField] private TextMeshProUGUI likeCountText;
@@ -35,6 +37,16 @@ public class PostItemView : MonoBehaviour
 
         if (data.postPhoto != null)
             postPhotoImage.sprite = data.postPhoto;
+
+        // 画像リンクIDをセット
+        if (photoLinkHandler != null)
+        {
+            photoLinkHandler.SetLinkID(data.photoLinkID);
+
+            // ボタンのクリックイベントを登録
+            postPhotoButton.onClick.RemoveAllListeners();
+            postPhotoButton.onClick.AddListener(photoLinkHandler.OnPhotoClicked);
+        }
 
         likeButton.onClick.RemoveAllListeners();
         likeButton.onClick.AddListener(OnLikeButtonClicked);
