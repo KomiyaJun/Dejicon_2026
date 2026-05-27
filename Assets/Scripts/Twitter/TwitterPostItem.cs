@@ -18,6 +18,9 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Image likeIcon;
     [SerializeField] private TextMeshProUGUI likeCountText;
 
+    [SerializeField] private Sprite normalHeartSprite;
+    [SerializeField] private Sprite likedHeartSprite;
+
     [SerializeField] private Color normalLikeColor = new Color(0.45f, 0.5f, 0.55f, 1f);
     [SerializeField] private Color likedColor = new Color(1f, 0.1f, 0.35f, 1f);
 
@@ -132,6 +135,7 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
     {
         if (likeIcon != null)
         {
+            likeIcon.sprite = isLiked ? likedHeartSprite : normalHeartSprite;
             likeIcon.color = isLiked ? likedColor : normalLikeColor;
         }
 
@@ -185,7 +189,11 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        WindowService.Instance.OpenWindow(memoWindowData);
+        // メモウィンドウがまだ表示されていない時だけ開く
+        if (!WindowService.Instance.IsWindowVisible(memoWindowData))
+        {
+            WindowService.Instance.OpenWindow(memoWindowData);
+        }
 
         StartCoroutine(ActivateMemoAfterOpen(key));
     }
