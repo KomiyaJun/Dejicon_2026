@@ -136,18 +136,56 @@ public class PhotoLinkHandler : MonoBehaviour
             Debug.Log("メモへのジャンプ: " + key);
             OpenWindowAndActivate(memoWindowData, key);
         }
-        // "map_" で始まる場合はマップウィンドウを開く
+        // "map_" で始まる場合はマップウィンドウを開いて画像を切り替える
         else if (id.StartsWith("map_"))
         {
             string key = id.Replace("map_", "");
             Debug.Log("マップへのジャンプ: " + key);
+
+            // マップウィンドウを開く
             OpenWindow(mapWindowData);
+
+            // 画像を切り替える
+            StartCoroutine(SwitchMapAfterDelay(key));
         }
         // それ以外のリンク
         else
         {
             Debug.Log("リンクをクリック: " + id);
             OpenWindow(defaultWindowData);
+        }
+    }
+
+    // 指定秒数後にマップ画像を切り替えるコルーチン
+    private IEnumerator SwitchMapAfterDelay(string key)
+    {
+        // ウィンドウが開くのを待つ
+        yield return new WaitForSeconds(activateDelay);
+
+        if (MapKoukuController.ActiveInstance == null)
+        {
+            Debug.LogWarning("MapKoukuController.ActiveInstance が見つかりません");
+            yield break;
+        }
+
+        // キーによってマップを切り替える
+        switch (key)
+        {
+            case "kouku":
+                MapKoukuController.ActiveInstance.ShowKoukuOn();
+                Debug.Log("校区線ありマップに切り替えました");
+                break;
+            case "nokou":
+                MapKoukuController.ActiveInstance.ShowKoukuOff();
+                Debug.Log("校区線なしマップに切り替えました");
+                break;
+            case "toggle":
+                MapKoukuController.ActiveInstance.ToggleKouku();
+                Debug.Log("校区線の表示を切り替えました");
+                break;
+            default:
+                Debug.LogWarning("不明なマップキー: " + key);
+                break;
         }
     }
 }
