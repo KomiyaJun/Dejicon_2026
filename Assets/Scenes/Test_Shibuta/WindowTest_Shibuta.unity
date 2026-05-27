@@ -1857,6 +1857,7 @@ GameObject:
   - component: {fileID: 1215712239}
   - component: {fileID: 1215712238}
   - component: {fileID: 1215712241}
+  - component: {fileID: 1215712242}
   m_Layer: 5
   m_Name: Image_Dummy
   m_TagString: Untagged
@@ -1926,7 +1927,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1215712239}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1215712242}
+        m_TargetAssemblyTypeName: WindowBridge, Assembly-CSharp
+        m_MethodName: OnButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1215712239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1982,6 +1995,19 @@ MonoBehaviour:
   normalizedPosition: {x: 0.48, y: 0.5}
   arrowRotationZ: 70
   removeOnSecondClick: 0
+--- !u!114 &1215712242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215712236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d00f14dd5683e0243b70396e8a71aeaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: 3efb7764c5fc49645942c9353d1b6f1d, type: 2}
 --- !u!1 &1394676124
 GameObject:
   m_ObjectHideFlags: 0
