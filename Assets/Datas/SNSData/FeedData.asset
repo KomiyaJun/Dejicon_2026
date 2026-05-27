@@ -15,4 +15,7 @@ MonoBehaviour:
   posts:
   - {fileID: 11400000, guid: bf54f990af4526341826e806d5030c95, type: 2}
   - {fileID: 11400000, guid: f65aedde821a2db40bcc6e11e6d64277, type: 2}
+  - {fileID: 11400000, guid: 0bb067e787afb044084d2b2782ead2bd, type: 2}
+  - {fileID: 11400000, guid: 633115183510e644c854526c42090b39, type: 2}
+  - {fileID: 11400000, guid: d8eeb4a700420414bbeb81727fe926de, type: 2}
   - {fileID: 11400000, guid: 9c804c203c67a894badc7b10ff6c9e0d, type: 2}

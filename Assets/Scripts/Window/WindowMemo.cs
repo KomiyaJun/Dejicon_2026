@@ -2,20 +2,24 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using UnityEngine.UI;
 
 public class WindowMemo : WindowBase
 {
-    // どこからでも WindowMemo.Instance でアクセスできるようにする
     public static WindowMemo Instance { get; private set; }
 
     [System.Serializable]
     public struct KeywordSetting
     {
-        public string keyword;       // キーワード名（例: "Key1"）
-        public GameObject targetObj; // 【修正！】GameObjectという名前から変更
+        public string keyword;
+        public GameObject targetObj;
     }
 
     [SerializeField] private List<KeywordSetting> _keywordSettings;
+
+    [Header("全キーワード解放時に表示するボタン")]
+    // 全キーワードが揃ったときに表示するボタン
+    [SerializeField] private GameObject allUnlockedButton;
 
     protected override async UniTask OnOpen()
     {
@@ -27,6 +31,10 @@ public class WindowMemo : WindowBase
             if (setting.targetObj != null)
                 setting.targetObj.SetActive(false);
         }
+
+        // ボタンも非表示にする
+        if (allUnlockedButton != null)
+            allUnlockedButton.SetActive(false);
 
         // アニメーション完了を待つ
         await base.OnOpen();
@@ -41,9 +49,12 @@ public class WindowMemo : WindowBase
                     setting.targetObj.SetActive(isUnlocked);
             }
         }
+
+        // 全キーワードが揃っているか確認する
+        CheckAllUnlocked();
     }
 
-    // キーワードを活性化（表示）するメソッド
+    // キーワードを活性化するメソッド
     public void ActivateContent(string key)
     {
         var setting = _keywordSettings.FirstOrDefault(s => s.keyword == key);
@@ -52,7 +63,6 @@ public class WindowMemo : WindowBase
         {
             setting.targetObj.SetActive(true);
 
-            // GameDataManager が存在する場合のみ保存する
             if (GameDataManager.Instance != null)
             {
                 GameDataManager.Instance.Unlock(key);
@@ -62,10 +72,31 @@ public class WindowMemo : WindowBase
             {
                 Debug.LogWarning("GameDataManager.Instance が見つかりません");
             }
+
+            // キーワードを活性化するたびに全キーワードが揃ったか確認する
+            CheckAllUnlocked();
         }
         else
         {
             Debug.LogWarning($"{key} に対応するオブジェクトが見つかりません");
+        }
+    }
+
+    // 全キーワードが揃ったか確認するメソッド
+    private void CheckAllUnlocked()
+    {
+        if (GameDataManager.Instance == null) return;
+
+        // 全キーワードが解放済みかどうか確認する
+        bool allUnlocked = _keywordSettings.All(
+            s => GameDataManager.Instance.IsUnlocked(s.keyword)
+        );
+
+        // 全キーワードが揃った場合はボタンを表示する
+        if (allUnlocked && allUnlockedButton != null)
+        {
+            allUnlockedButton.SetActive(true);
+            Debug.Log("全キーワードが揃いました");
         }
     }
 

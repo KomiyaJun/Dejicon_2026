@@ -167,18 +167,59 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
             Debug.Log("メモへのジャンプ: " + key);
             OpenWindowAndActivate(memoWindowData, key);
         }
-        // "map_" で始まる場合はマップウィンドウを開く
+        // "map_" で始まる場合はマップウィンドウを開いて画像を切り替える
         else if (linkID.StartsWith("map_"))
         {
             string key = linkID.Replace("map_", "");
             Debug.Log("マップへのジャンプ: " + key);
+
+            // マップウィンドウを開く
             OpenWindow(mapWindowData);
+
+            // 画像を切り替える
+            StartCoroutine(SwitchMapAfterDelay(key));
         }
         // それ以外のリンク
         else
         {
             Debug.Log("リンクをクリック: " + linkID);
             OpenWindow(defaultWindowData);
+        }
+    }
+
+    // 指定秒数後にマップ画像を切り替えるコルーチン
+    private IEnumerator SwitchMapAfterDelay(string key)
+    {
+        // ウィンドウが開くのを待つ
+        yield return new WaitForSeconds(activateDelay);
+
+        if (MapKoukuController.ActiveInstance == null)
+        {
+            Debug.LogWarning("MapKoukuController.ActiveInstance が見つかりません");
+            yield break;
+        }
+
+        // キーによってマップを切り替える
+        switch (key)
+        {
+            case "kouku":
+                // 校区線ありマップに切り替え
+                MapKoukuController.ActiveInstance.ShowKoukuOn();
+                Debug.Log("校区線ありマップに切り替えました");
+                break;
+            case "nokou":
+                // 校区線なしマップに切り替え
+                MapKoukuController.ActiveInstance.ShowKoukuOff();
+                Debug.Log("校区線なしマップに切り替えました");
+                break;
+            case "toggle":
+                // 校区線の表示を切り替え
+                MapKoukuController.ActiveInstance.ToggleKouku();
+                Debug.Log("校区線の表示を切り替えました");
+                break;
+            default:
+                Debug.LogWarning("不明なマップキー: " + key);
+                break;
         }
     }
 }
