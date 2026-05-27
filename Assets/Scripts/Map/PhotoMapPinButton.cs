@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
-public class PhotoMapMarkerButtonNoArrowSetting : MonoBehaviour
+public class PhotoMapPinButton : MonoBehaviour
 {
     [Header("この写真ボタン")]
     [SerializeField] private Button photoButton;
@@ -16,9 +16,8 @@ public class PhotoMapMarkerButtonNoArrowSetting : MonoBehaviour
     [Header("同じ写真をもう一度押したら消す")]
     [SerializeField] private bool removeOnSecondClick = false;
 
-    // 既存のMapWindowMarkerManagerに渡すための固定値
-    // 矢印画像が右向きの場合、0度は右向き
-    private const float FixedArrowRotationZ = 0f;
+    // 既存のMapWindowMarkerManagerに渡すためだけの固定値
+    private const float DummyArrowRotationZ = 0f;
 
     private void Reset()
     {
@@ -64,6 +63,33 @@ public class PhotoMapMarkerButtonNoArrowSetting : MonoBehaviour
             return;
         }
 
-        markerManager.AddOrUpdateMarker(markerId, normalizedPosition, FixedArrowRotationZ);
+        // 既存のMapWindowMarkerManagerでピン＋矢印を生成
+        markerManager.AddOrUpdateMarker(markerId, normalizedPosition, DummyArrowRotationZ);
+
+        // 生成された矢印だけ非表示にする
+        HideArrow(markerManager);
+    }
+
+    private void HideArrow(MapWindowMarkerManager markerManager)
+    {
+        string markerObjectName = "MarkerPair_" + markerId;
+
+        RectTransform[] rectTransforms = markerManager.GetComponentsInChildren<RectTransform>(true);
+
+        foreach (RectTransform rect in rectTransforms)
+        {
+            if (rect.name != markerObjectName) continue;
+
+            Transform arrow = rect.Find("Arrow");
+
+            if (arrow != null)
+            {
+                arrow.gameObject.SetActive(false);
+            }
+
+            return;
+        }
+
+        Debug.LogWarning(markerObjectName + " が見つかりませんでした。");
     }
 }
