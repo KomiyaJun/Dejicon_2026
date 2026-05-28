@@ -103,7 +103,9 @@ public class TitleManager : MonoBehaviour
         if (FadeManager.Instance != null)
             yield return StartCoroutine(FadeManager.Instance.FadeOut(fadeOutDuration));
 
-        SceneManager.LoadScene(sceneName);
+        //SceneManager.LoadScene(sceneName);    トランジション仕様に置き換えます---小宮
+        SceneTransitionManager.Instance.LoadScene(sceneName);
+
     }
 
     // ─────────────────────────────────────────

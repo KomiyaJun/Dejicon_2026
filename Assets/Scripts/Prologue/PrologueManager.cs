@@ -176,7 +176,8 @@ public class PrologueManager : MonoBehaviour
         if (FadeManager.Instance != null)
             yield return StartCoroutine(FadeManager.Instance.FadeOut());
 
-        SceneManager.LoadScene(gameSceneName);
+        //SceneManager.LoadScene(gameSceneName);    トランジション仕様に置き換えます---小宮
+        SceneTransitionManager.Instance.LoadScene(gameSceneName);
     }
 
     // ─────────────────────────────────────────
