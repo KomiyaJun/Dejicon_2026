@@ -5,38 +5,14 @@ using System.Collections.Generic;
 
 public class TwitterWindowUI : MonoBehaviour
 {
-    [Serializable]
-    public class PostData
-    {
-        [Header("“ŠeÒ–¼")]
-        public string userName = "User";
-        [Header("“Še“à—e")]
-        [TextArea(3, 10)]
-        public string postText = "‚±‚ê‚Í“Še–{•¶‚Å‚·B";
-        [Header("“Še‰æ‘œ")]
-        public Sprite postImage;
-        [Header("ƒAƒoƒ^[ƒAƒCƒRƒ“")]
-        public Sprite avatarIcon;
-        [Header("ƒAƒoƒ^[‚ÌF")]
-        public Color avatarColor = new Color(0.1f, 0.45f, 1f);
-        [Header("‚¢‚¢‚Ë”")]
-        public int likeCount;
-        [Header("“Še“ú")]
-        public string postTime = "7ŠÔ";
+    [Header("ãƒ‡ãƒ¼ã‚¿")]
+    [SerializeField] private FeedData feedData;
 
-        [Header("–{•¶“àƒŠƒ“ƒN‚ğ—LŒø‚É‚·‚é")]
-        public bool useTextMemoLink = true;
-
-        [Header("‰æ‘œƒNƒŠƒbƒN‚É‰ğ•ú‚·‚éƒƒ‚ƒL[")]
-        public string imageMemoKey;
-    }
-
-    [Header("“Še—pcontent")]
+    [Header("æŠ•ç¨¿ç”¨content")]
     [SerializeField] private Transform contentRoot;
-    [Header("“Še‚PŒ•ª‚ÌPrefab")]
+    
+    [Header("æŠ•ç¨¿UIã®Prefab")]
     [SerializeField] private TwitterPostItem postPrefab;
-    [Header("•\¦‚·‚é“Šeˆê——")]
-    [SerializeField] private List<PostData> posts = new List<PostData>();
 
 
     private void Start()
@@ -48,7 +24,7 @@ public class TwitterWindowUI : MonoBehaviour
     {
         if (contentRoot == null || postPrefab == null)
         {
-            Debug.LogWarning("TwitterWindowUI‚Ìİ’è‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·");
+            Debug.LogWarning("TwitterWindowUIã®è¨­å®šãŒä¸è¶³ã—ã¦ã„ã¾ã™");
             return;
         }
 
@@ -57,30 +33,17 @@ public class TwitterWindowUI : MonoBehaviour
             Destroy(contentRoot.GetChild(i).gameObject);
         }
 
-        // Inspectorã‚ÌPosts‚ÅÅŒã‚É’Ç‰Á‚µ‚½‚à‚Ì‚ğˆê”Ôã‚É•\¦‚·‚é
-        for (int i = posts.Count - 1; i >= 0; i--)
+        if (feedData == null || feedData.posts == null) return;
+
+        // Twitterã¯æ–°ã—ã„æŠ•ç¨¿ãŒä¸Šã«ãã‚‹ã‚ˆã†ã«ã—ãŸã„å ´åˆã€ãã®ã¾ã¾ãƒ«ãƒ¼ãƒ—ã™ã‚‹ã‹é€†é †ãƒ«ãƒ¼ãƒ—ã™ã‚‹ã‹
+        // Instagramå´ã¯ãã®ã¾ã¾ãƒ«ãƒ¼ãƒ—ã—ã¦ã„ã¾ã—ãŸãŒã€å…ƒã®Twitterã®ã‚³ãƒ¼ãƒ‰ã«åˆã‚ã›ã¦é€†é †ã«è¡¨ç¤º
+        for (int i = feedData.posts.Length - 1; i >= 0; i--)
         {
-            PostData post = posts[i];
+            global::PostData post = feedData.posts[i];
+            if (post == null) continue;
 
             TwitterPostItem item = Instantiate(postPrefab, contentRoot);
-            item.SetUp(post.userName, post.postText, post.postImage, post.avatarIcon, post.avatarColor, post.likeCount, post.postTime, post.imageMemoKey);
+            item.Bind(post);
         }
-
     }
-
-    public void AddPost(String userName, string postText, Sprite postImage = null, Sprite avatarIcon = null)
-    {
-        PostData newPost = new PostData
-        {
-            userName = userName,
-            postText = postText,
-            postImage = postImage,
-            avatarIcon = avatarIcon,
-            avatarColor = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value)
-        };
-        posts.Add(newPost);
-        RefreshFeed();
-    }
-
-   
 }

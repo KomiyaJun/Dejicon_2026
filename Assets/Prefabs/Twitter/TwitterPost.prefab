@@ -3040,6 +3040,9 @@ MonoBehaviour:
   normalLikeColor: {r: 0.34509805, g: 0.40000004, b: 0.44705886, a: 1}
   likedColor: {r: 0.97647065, g: 0.09411766, b: 0.5019608, a: 1}
   memoWindowData: {fileID: 11400000, guid: 4789578288253f54f8fe37c0c87ffad8, type: 2}
+  mapWindowData: {fileID: 11400000, guid: 3efb7764c5fc49645942c9353d1b6f1d, type: 2}
+  defaultWindowData: {fileID: 0}
+  waitTimeout: 5
   postImageButton: {fileID: 4744415958988622827}
   imageMemoFrame: {fileID: 0}
   memoColor: {r: 0.25, g: 0.8, b: 1, a: 1}

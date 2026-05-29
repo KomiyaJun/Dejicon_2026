@@ -13,7 +13,7 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Image postImage;
     [SerializeField] private TextMeshProUGUI timeText;
 
-    [Header("Ç¢Ç¢ÇÀUI")]
+    [Header("„ÅÑ„ÅÑ„Å≠UI")]
     [SerializeField] private Button likeButton;
     [SerializeField] private Image likeIcon;
     [SerializeField] private TextMeshProUGUI likeCountText;
@@ -24,8 +24,11 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Color normalLikeColor = new Color(0.45f, 0.5f, 0.55f, 1f);
     [SerializeField] private Color likedColor = new Color(1f, 0.1f, 0.35f, 1f);
 
-    [Header("ÉÅÉÇòAåg")]
+    [Header("„É°„É¢ÈÄ£Êê∫")]
     [SerializeField] private WindowData memoWindowData;
+    [SerializeField] private WindowData mapWindowData;
+    [SerializeField] private WindowData defaultWindowData;
+    [SerializeField] private float waitTimeout = 5.0f;
     [SerializeField] private Button postImageButton;
     [SerializeField] private Image imageMemoFrame;
     [SerializeField] private Color memoColor = new Color(0.25f, 0.8f, 1f, 1f);
@@ -35,49 +38,52 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
     private int likeCount;
     private bool isLiked;
 
-    public void SetUp(string userName, string postText, Sprite image, Sprite avatarIcon, Color avatarColor, int startLikeCount, string postTime, string imageMemoKey)
+    public void Bind(global::PostData data)
     {
-        this.imageMemoKey = imageMemoKey;
+        if (data == null) return;
+
+        this.imageMemoKey = data.photoLinkID;
 
         if (avatarImage != null)
         {
-            if (avatarIcon != null)
+            if (data.accountIcon != null)
             {
-                avatarImage.sprite = avatarIcon;
+                avatarImage.sprite = data.accountIcon;
                 avatarImage.color = Color.white;
             }
             else
             {
                 avatarImage.sprite = null;
-                avatarImage.color = avatarColor;
+                // „Ç¢„Éê„Çø„Éº„Åå„Å™„ÅÑÂ†¥Âêà„ÅØPostData„ÅÆÊåáÂÆöËâ≤„Å´„Åô„ÇãÔºàTwitter„ÅÆÊó¢Â≠òÊåôÂãïÁ∂≠ÊåÅÔºâ
+                avatarImage.color = data.avatarColor;
             }
         }
 
         if (userNameText != null)
         {
-            userNameText.text = string.IsNullOrEmpty(userName) ? "Unknown User" : userName;
+            userNameText.text = string.IsNullOrEmpty(data.accountName) ? "Unknown User" : data.accountName;
         }
 
         if (timeText != null)
         {
-            timeText.text = string.IsNullOrEmpty(postTime)? "" : "" + postTime;
+            timeText.text = string.IsNullOrEmpty(data.timeAgo)? "" : "" + data.timeAgo;
         }
 
         if (bodyText != null)
         {
-            bodyText.text = postText.Replace("\\n", "\n");
+            bodyText.text = (data.caption ?? "").Replace("\\n", "\n");
         }
 
         if (postImage != null)
         {
-            if (image == null)
+            if (data.postPhoto == null)
             {
                 postImage.gameObject.SetActive(false);
             }
             else
             {
                 postImage.gameObject.SetActive(true);
-                postImage.sprite = image;
+                postImage.sprite = data.postPhoto;
                 postImage.preserveAspect = true;
             }
         }
@@ -86,7 +92,7 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
         {
             postImageButton.onClick.RemoveAllListeners();
 
-            if (image != null && !string.IsNullOrEmpty(imageMemoKey))
+            if (data.postPhoto != null && !string.IsNullOrEmpty(imageMemoKey))
             {
                 postImageButton.onClick.AddListener(OnPostImageClicked);
             }
@@ -94,11 +100,11 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
 
         if (imageMemoFrame != null)
         {
-            imageMemoFrame.gameObject.SetActive(image != null && !string.IsNullOrEmpty(imageMemoKey));
+            imageMemoFrame.gameObject.SetActive(data.postPhoto != null && !string.IsNullOrEmpty(imageMemoKey));
             imageMemoFrame.color = memoColor;
         }
 
-        likeCount = startLikeCount;
+        likeCount = data.likeCount;
         isLiked = false;
 
         if (likeButton != null)
@@ -163,62 +169,141 @@ public class TwitterPostItem : MonoBehaviour, IPointerClickHandler
 
         if (linkID.StartsWith("memo_"))
         {
-            string key = linkID.Replace("memo_", "");
-            ActivateMemo(key);
+            // ÂÖÉ„ÅÆ„É≠„Ç∏„ÉÉ„ÇØ„Å´‰ª£„Çè„ÇäÊ±éÁî®„É™„É≥„ÇØÂá¶ÁêÜ„Å∏
+            OnLinkClicked(linkID);
+        }
+        else
+        {
+            // memo_ ‰ª•Â§ñ„ÅÆ„ÇÇ„ÅÆÔºàmap_ Á≠âÔºâ„ÅåÊù•„ÅüÂ†¥Âêà„ÇÇÈÄö„Åô
+            OnLinkClicked(linkID);
         }
     }
 
     private void OnPostImageClicked()
     {
-        ActivateMemo(imageMemoKey);
+        OnLinkClicked(imageMemoKey);
     }
 
-    private void ActivateMemo(string key)
+    private Transform GetWindowParent()
     {
-        if (string.IsNullOrEmpty(key)) return;
+        GameObject obj = GameObject.Find("Window_Parent");
+        if (obj != null) return obj.transform;
+        Debug.LogWarning("[TwitterPostItem] Window_Parent „ÅåË¶ã„Å§„Åã„Çä„Åæ„Åõ„Çì");
+        return null;
+    }
 
-        if (memoWindowData == null)
+    private void OpenWindow(WindowData data)
+    {
+        if (data == null) return;
+
+        Transform parent = GetWindowParent();
+
+        if (WindowCache.Instance != null)
         {
-            Debug.LogWarning("memoWindowData Ç™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ");
+            WindowCache.Instance.OpenWindow(data, parent);
+        }
+        else if (WindowService.Instance != null)
+        {
+            WindowService.Instance.OpenWindow(data);
+        }
+    }
+
+    private void OpenWindowAndActivate(WindowData data, string key)
+    {
+        if (WindowCache.Instance != null && WindowCache.Instance.IsOpen(data))
+        {
+            WindowBase window = WindowCache.Instance.GetWindow(data);
+            window?.transform.SetAsLastSibling();
+            StartCoroutine(WaitForWindowMemoAndActivate(key));
             return;
         }
 
-        if (WindowService.Instance == null)
-        {
-            Debug.LogWarning("WindowService.Instance Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒ");
-            return;
-        }
-
-        // ÉÅÉÇÉEÉBÉìÉhÉEÇ™Ç‹Çæï\é¶Ç≥ÇÍÇƒÇ¢Ç»Ç¢éûÇæÇØäJÇ≠
-        if (!WindowService.Instance.IsWindowVisible(memoWindowData))
-        {
-            WindowService.Instance.OpenWindow(memoWindowData);
-        }
-
-        StartCoroutine(ActivateMemoAfterOpen(key));
+        OpenWindow(data);
+        StartCoroutine(WaitForWindowMemoAndActivate(key));
     }
 
-    private IEnumerator ActivateMemoAfterOpen(string key)
+    private IEnumerator WaitForWindowMemoAndActivate(string key)
     {
-        float timeout = 3f;
-        float timer = 0f;
-
-        while (WindowMemo.Instance == null && timer < timeout)
+        float elapsed = 0f;
+        while (WindowMemo.Instance == null && elapsed < waitTimeout)
         {
-            timer += Time.deltaTime;
             yield return null;
+            elapsed += Time.unscaledDeltaTime;
         }
 
         if (WindowMemo.Instance == null)
         {
-            Debug.LogWarning("WindowMemo.Instance Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÇ≈ÇµÇΩ");
+            Debug.LogWarning($"[TwitterPostItem] WindowMemo.Instance „Åå {waitTimeout}Áßí Áµå„Å£„Å¶„ÇÇÂèñÂæó„Åß„Åç„Åæ„Åõ„Çì„Åß„Åó„Åü„ÄÇ„Ç≠„Éº: {key}");
             yield break;
         }
 
         WindowMemo.Instance.ActivateContent(key);
-        Debug.Log($"{key} ÇÉÅÉÇÇ…ï€ë∂ÇµÇ‹ÇµÇΩ");
+        Debug.Log($"[TwitterPostItem] {key} „ÇíÊ¥ªÊÄßÂåñ„Åó„Åæ„Åó„Åü");
     }
 
+    private void OnLinkClicked(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return;
 
+        if (id.Contains("+"))
+        {
+            string[] parts = id.Split('+');
+            foreach (string part in parts)
+            {
+                string trimmed = part.Trim();
+                if (!string.IsNullOrEmpty(trimmed))
+                    OnLinkClicked(trimmed);
+            }
+            return;
+        }
 
+        if (id.StartsWith("memo_"))
+        {
+            string key = id.Replace("memo_", "");
+            OpenWindowAndActivate(memoWindowData, key);
+        }
+        else if (id.StartsWith("map_"))
+        {
+            string key = id.Replace("map_", "");
+            MapPinDatabase.Instance?.RevealPin(key);
+            OpenWindow(mapWindowData);
+            StartCoroutine(SwitchMapAfterWindowOpens(key));
+        }
+        else
+        {
+            OpenWindow(defaultWindowData);
+        }
+    }
+
+    private IEnumerator SwitchMapAfterWindowOpens(string key)
+    {
+        if (key != "kouku" && key != "nokou" && key != "toggle")
+            yield break;
+
+        float elapsed = 0f;
+        while (MapKoukuController.ActiveInstance == null && elapsed < waitTimeout)
+        {
+            yield return null;
+            elapsed += Time.unscaledDeltaTime;
+        }
+
+        if (MapKoukuController.ActiveInstance == null)
+        {
+            Debug.LogWarning("[TwitterPostItem] MapKoukuController.ActiveInstance „ÅåË¶ã„Å§„Åã„Çä„Åæ„Åõ„Çì");
+            yield break;
+        }
+
+        switch (key)
+        {
+            case "kouku":
+                MapKoukuController.ActiveInstance.ShowKoukuOn();
+                break;
+            case "nokou":
+                MapKoukuController.ActiveInstance.ShowKoukuOff();
+                break;
+            case "toggle":
+                MapKoukuController.ActiveInstance.ToggleKouku();
+                break;
+        }
+    }
 }

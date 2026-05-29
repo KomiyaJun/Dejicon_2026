@@ -6,18 +6,18 @@ public class MapWindowMarkerManager : MonoBehaviour
 {
     public static MapWindowMarkerManager ActiveInstance { get; private set; }
 
-    [Header("ƒ}[ƒJ[‚ğ•\¦‚·‚éƒŒƒCƒ„[")]
+    [Header("ãƒãƒ¼ã‚«ãƒ¼ã‚’è¡¨ç¤ºã™ã‚‹ãƒ¬ã‚¤ãƒ¤ãƒ¼")]
     [SerializeField] private RectTransform markerLayer;
 
-    [Header("ƒsƒ“‚Æ–îˆó‚Ì‰æ‘œ")]
+    [Header("ãƒ”ãƒ³ã¨çŸ¢å°ã®ç”»åƒ")]
     [SerializeField] private Sprite pinSprite;
     [SerializeField] private Sprite arrowSprite;
 
-    [Header("ƒsƒ“‚Æ–îˆó‚Ì•\¦ƒTƒCƒY")]
+    [Header("ãƒ”ãƒ³ã¨çŸ¢å°ã®è¡¨ç¤ºã‚µã‚¤ã‚º")]
     [SerializeField] private Vector2 pinSize = new Vector2(36f, 36f);
     [SerializeField] private Vector2 arrowSize = new Vector2(42f, 42f);
 
-    [Header("–îˆó‚ğƒsƒ“‚©‚ç—£‚·‹——£")]
+    [Header("çŸ¢å°ã‚’ãƒ”ãƒ³ã‹ã‚‰é›¢ã™è·é›¢")]
     [SerializeField] private float arrowDistance = 32f;
 
     private readonly Dictionary<string, MarkerPair> markers = new Dictionary<string, MarkerPair>();
@@ -33,7 +33,7 @@ public class MapWindowMarkerManager : MonoBehaviour
     {
         if (!gameObject.scene.IsValid())
         {
-            Debug.LogError("MapWindowMarkerManager ‚ª Project“à‚ÌPrefab Assetã‚ÅÀs‚³‚ê‚Ä‚¢‚Ü‚·BSceneã‚ÌMapWindow‚ÅÀs‚µ‚Ä‚­‚¾‚³‚¢B");
+            Debug.LogError("MapWindowMarkerManager ãŒ Projectå†…ã®Prefab Assetä¸Šã§å®Ÿè¡Œã•ã‚Œã¦ã„ã¾ã™ã€‚Sceneä¸Šã®MapWindowã§å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚");
             return;
         }
 
@@ -45,6 +45,9 @@ public class MapWindowMarkerManager : MonoBehaviour
         if (gameObject.scene.IsValid())
         {
             ActiveInstance = this;
+
+            // ãƒãƒƒãƒ—ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒé–‹ããŸã³ã«ã€SNS çµŒç”±ã§å…¬é–‹æ¸ˆã¿ã®ãƒ”ãƒ³ã‚’å¾©å…ƒã™ã‚‹
+            MapPinDatabase.Instance?.RestoreRevealedPins(this);
         }
     }
 
@@ -56,23 +59,23 @@ public class MapWindowMarkerManager : MonoBehaviour
         }
     }
 
-    public void AddOrUpdateMarker(string markerId, Vector2 normalizedPosition, float arrowRotationZ)
+    public void AddOrUpdateMarker(string markerId, Vector2 normalizedPosition, float arrowRotationZ, bool showArrow = true)
     {
         if (markerLayer == null)
         {
-            Debug.LogError("MarkerLayer ‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñBMapWindow Prefab“à‚Ì MarkerLayer ‚ğ“o˜^‚µ‚Ä‚­‚¾‚³‚¢B");
+            Debug.LogError("MarkerLayer ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚MapWindow Prefabå†…ã® MarkerLayer ã‚’ç™»éŒ²ã—ã¦ãã ã•ã„ã€‚");
             return;
         }
 
         if (!markerLayer.gameObject.scene.IsValid())
         {
-            Debug.LogError("MarkerLayer ‚É Project“à‚ÌPrefab Asset ‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚·BHierarchyã‚É¶¬‚³‚ê‚½ MapWindow ‚Ì MarkerLayer ‚ğg‚Á‚Ä‚­‚¾‚³‚¢B");
+            Debug.LogError("MarkerLayer ã« Projectå†…ã®Prefab Asset ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã™ã€‚Hierarchyä¸Šã«ç”Ÿæˆã•ã‚ŒãŸ MapWindow ã® MarkerLayer ã‚’ä½¿ã£ã¦ãã ã•ã„ã€‚");
             return;
         }
 
         if (string.IsNullOrEmpty(markerId))
         {
-            Debug.LogWarning("Marker ID ‚ª‹ó‚Å‚·B");
+            Debug.LogWarning("Marker ID ãŒç©ºã§ã™ã€‚");
             return;
         }
 
@@ -101,6 +104,7 @@ public class MapWindowMarkerManager : MonoBehaviour
 
         markerPair.arrow.anchoredPosition = arrowDirection * arrowDistance;
         markerPair.arrow.localRotation = Quaternion.Euler(0f, 0f, arrowRotationZ);
+        markerPair.arrow.gameObject.SetActive(showArrow);
 
         markerPair.root.gameObject.SetActive(true);
         markerPair.root.SetAsLastSibling();

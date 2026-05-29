@@ -5,186 +5,235 @@ using System.Collections;
 
 public class PhotoLinkHandler : MonoBehaviour
 {
-    [Header("ƒNƒŠƒbƒN‚Ì‰‰o")]
-    // ƒNƒŠƒbƒN‚ÉˆÃ‚­‚·‚éŠÔ
+    [Header("ã‚¯ãƒªãƒƒã‚¯æ™‚ã®æ¼”å‡º")]
+    // ã‚¯ãƒªãƒƒã‚¯æ™‚ã«æš—ãã™ã‚‹æ™‚é–“
     [SerializeField] private float flashDuration = 0.15f;
-    // ƒNƒŠƒbƒN‚ÌˆÃ‚³
+    // ã‚¯ãƒªãƒƒã‚¯æ™‚ã®æš—ã•
     [SerializeField] private Color clickedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
 
-    [Header("ƒEƒBƒ“ƒhƒE")]
-    // ƒƒ‚—pƒEƒBƒ“ƒhƒE‚ÌWindowData
+    [Header("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦")]
+    // ãƒ¡ãƒ¢ç”¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®WindowData
     [SerializeField] private WindowData memoWindowData;
-    // ƒ}ƒbƒv—pƒEƒBƒ“ƒhƒE‚ÌWindowData
+    // ãƒãƒƒãƒ—ç”¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®WindowData
     [SerializeField] private WindowData mapWindowData;
-    // ‚»‚Ì‘¼—pƒEƒBƒ“ƒhƒE‚ÌWindowData
+    // ãã®ä»–ç”¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®WindowData
     [SerializeField] private WindowData defaultWindowData;
-    // ƒL[ƒ[ƒhŠˆ«‰»‚Ü‚Å‚Ì‘Ò‹@•b”
-    [SerializeField] private float activateDelay = 2.0f;
+    // WindowMemo.Instance ãŒ null ã®å ´åˆã«å¾…æ©Ÿã™ã‚‹ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆç§’æ•°
+    [SerializeField] private float waitTimeout = 5.0f;
 
-    // ƒEƒBƒ“ƒhƒE‚ğ¶¬‚·‚éeƒIƒuƒWƒFƒNƒg
-    private Transform windowParent;
-
-    // ‰æ‘œ‚ÌImageƒRƒ“ƒ|[ƒlƒ“ƒg
+    // ç”»åƒã®Imageã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
     private Image photoImage;
 
-    // ƒNƒŠƒbƒN‚µ‚½‚Æ‚«‚É”­‰Î‚·‚éƒŠƒ“ƒNID
+    // ã‚¯ãƒªãƒƒã‚¯ã—ãŸã¨ãã«ç™ºç«ã™ã‚‹ãƒªãƒ³ã‚¯ID
     private string linkID;
 
     private void Awake()
     {
         photoImage = GetComponent<Image>();
-
-        // Window_Parent‚ğ©“®æ“¾
-        GameObject obj = GameObject.Find("Window_Parent");
-        if (obj != null)
-            windowParent = obj.transform;
-        else
-            Debug.LogWarning("Window_Parent‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
     }
 
-    // PostItemView‚©‚çŒÄ‚Î‚ê‚ÄƒŠƒ“ƒNID‚ğƒZƒbƒg‚·‚é
+    /// <summary>Window_Parent ã‚’æ¯å›å‹•çš„ã«å–å¾—ã—ã¦è¿”ã™</summary>
+    private Transform GetWindowParent()
+    {
+        GameObject obj = GameObject.Find("Window_Parent");
+        if (obj != null) return obj.transform;
+        Debug.LogWarning("[PhotoLinkHandler] Window_Parent ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
+        return null;
+    }
+
+    // PostItemViewã‹ã‚‰å‘¼ã°ã‚Œã¦ãƒªãƒ³ã‚¯IDã‚’ã‚»ãƒƒãƒˆã™ã‚‹
     public void SetLinkID(string id)
     {
         linkID = id;
 
-        // ƒŠƒ“ƒNID‚ª‹ó‚Ìê‡‚ÍButton‚ğ–³Œø‰»‚·‚é
+        // ãƒªãƒ³ã‚¯IDãŒç©ºã®å ´åˆã¯Buttonã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
         Button button = GetComponent<Button>();
         if (button != null)
             button.interactable = !string.IsNullOrEmpty(linkID);
     }
 
-    // Button‚ÌƒNƒŠƒbƒNƒCƒxƒ“ƒg‚É“o˜^‚·‚éƒƒ\ƒbƒh
+    // Buttonã®ã‚¯ãƒªãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆã®ãƒ¡ã‚½ãƒƒãƒ‰ã¨ã—ã¦PostItemViewã‹ã‚‰ç™»éŒ²ã•ã‚Œã‚‹
     public void OnPhotoClicked()
     {
-        // ƒŠƒ“ƒNID‚ª‹ó‚Ìê‡‚Í‰½‚à‚µ‚È‚¢
+        // ãƒªãƒ³ã‚¯IDãŒç©ºã®å ´åˆã¯ä½•ã‚‚ã—ãªã„
         if (string.IsNullOrEmpty(linkID)) return;
 
         StartCoroutine(FlashAndOpen());
     }
 
-    // ƒNƒŠƒbƒN‚ÉˆêuˆÃ‚­‚µ‚Ä‚©‚çƒEƒBƒ“ƒhƒE‚ğŠJ‚­ƒRƒ‹[ƒ`ƒ“
+    // ã‚¯ãƒªãƒƒã‚¯æ™‚ã«ä¸€ç¬æš—ãã—ã¦ã‹ã‚‰ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ãã‚³ãƒ«ãƒ¼ãƒãƒ³
     private IEnumerator FlashAndOpen()
     {
-        // ˆêuˆÃ‚­‚·‚é
+        // ä¸€ç¬æš—ãã™ã‚‹
         if (photoImage != null)
             photoImage.color = clickedColor;
 
         yield return new WaitForSeconds(flashDuration);
 
-        // Œ³‚ÌF‚É–ß‚·
+        // å…ƒã®è‰²ã«æˆ»ã™
         if (photoImage != null)
             photoImage.color = Color.white;
 
-        // ƒŠƒ“ƒNID‚É‚æ‚Á‚Äˆ—‚ğ•ªŠò
+        // ãƒªãƒ³ã‚¯IDã«ã‚ˆã£ã¦å‡¦ç†ã‚’åˆ†å²
         OnLinkClicked(linkID);
     }
 
-    // WindowData‚©‚çƒEƒBƒ“ƒhƒE‚ğŠJ‚­ƒƒ\ƒbƒh
+    // WindowDataã‹ã‚‰ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ããƒ¡ã‚½ãƒƒãƒ‰
     private void OpenWindow(WindowData data)
     {
-        if (WindowCache.Instance == null)
+        if (data == null)
         {
-            Debug.LogWarning("WindowCache‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+            Debug.LogWarning("[PhotoLinkHandler] WindowData ãŒ null ã§ã™");
             return;
         }
 
-        WindowCache.Instance.OpenWindow(data, windowParent);
+        Transform parent = GetWindowParent();
+
+        if (WindowCache.Instance != null)
+        {
+            WindowCache.Instance.OpenWindow(data, parent);
+        }
+        else if (WindowService.Instance != null)
+        {
+            // WindowCacheãŒãªã‘ã‚Œã°WindowManagerã§é–‹ãï¼ˆãƒ•ã‚©ãƒ¼ãƒ«ãƒãƒƒã‚¯ï¼‰
+            WindowService.Instance.OpenWindow(data);
+        }
+        else
+        {
+            Debug.LogWarning("[PhotoLinkHandler] WindowCache ã‚‚ WindowService ã‚‚è¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
+        }
     }
 
-    // ƒEƒBƒ“ƒhƒE‚ğŠJ‚¢‚½Œã‚ÉƒL[ƒ[ƒh‚ğŠˆ«‰»‚·‚éƒƒ\ƒbƒh
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã„ãŸå¾Œã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æ´»æ€§åŒ–ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰
     private void OpenWindowAndActivate(WindowData data, string key)
     {
-        // ‚·‚Å‚ÉŠJ‚¢‚Ä‚¢‚éê‡‚ÍActivateContent‚¾‚¯ŒÄ‚Ô
+        // ã™ã§ã«é–‹ã„ã¦ã„ã‚‹å ´åˆã¯ActivateContentã ã‘å‘¼ã¶
         if (WindowCache.Instance != null && WindowCache.Instance.IsOpen(data))
         {
             WindowBase window = WindowCache.Instance.GetWindow(data);
             window?.transform.SetAsLastSibling();
-            StartCoroutine(ActivateAfterDelay(key));
+            StartCoroutine(WaitForWindowMemoAndActivate(key));
             return;
         }
 
-        // •Â‚¶‚Ä‚¢‚éê‡‚ÍŠJ‚¢‚Ä‚©‚çƒL[ƒ[ƒh‚ğŠˆ«‰»
+        // é–‰ã˜ã¦ã„ã‚‹å ´åˆã¯é–‹ã„ã¦ã‹ã‚‰ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æ´»æ€§åŒ–
         OpenWindow(data);
-        StartCoroutine(ActivateAfterDelay(key));
+        StartCoroutine(WaitForWindowMemoAndActivate(key));
     }
 
-    // w’è•b”Œã‚ÉƒL[ƒ[ƒh‚ğŠˆ«‰»‚·‚éƒRƒ‹[ƒ`ƒ“
-    private IEnumerator ActivateAfterDelay(string key)
+    /// <summary>
+    /// WindowMemo.Instance ãŒæœ‰åŠ¹ã«ãªã‚‹ã¾ã§ãƒãƒ¼ãƒªãƒ³ã‚°ã—ã¦ã‹ã‚‰ ActivateContent ã‚’å‘¼ã¶ã€‚
+    /// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ™‚é–“(1ç§’)ãŒçµŒéã™ã‚‹ã¨ OnOpen() ãŒå‘¼ã°ã‚Œã¦ Instance ãŒã‚»ãƒƒãƒˆã•ã‚Œã‚‹ã€‚
+    /// waitTimeout ç§’ä»¥å†…ã« Instance ãŒå–å¾—ã§ããªã‘ã‚Œã°è­¦å‘Šã—ã¦breakã€‚
+    /// </summary>
+    private IEnumerator WaitForWindowMemoAndActivate(string key)
     {
-        // activateDelay •b‘Ò‚Â
-        yield return new WaitForSeconds(activateDelay);
+        float elapsed = 0f;
 
-        // WindowMemo ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª‘¶İ‚·‚é‚©Šm”F
+        // WindowMemo.Instance ãŒã‚»ãƒƒãƒˆã•ã‚Œã‚‹ã¾ã§å¾…ã¤
+        while (WindowMemo.Instance == null && elapsed < waitTimeout)
+        {
+            yield return null;
+            elapsed += Time.unscaledDeltaTime;
+        }
+
         if (WindowMemo.Instance == null)
         {
-            Debug.LogWarning("WindowMemo.Instance ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+            Debug.LogWarning($"[PhotoLinkHandler] WindowMemo.Instance ãŒ {waitTimeout}ç§’ çµŒã£ã¦ã‚‚å–å¾—ã§ãã¾ã›ã‚“ã§ã—ãŸã€‚ã‚­ãƒ¼: {key}");
             yield break;
         }
 
-        // ƒL[ƒ[ƒh‚ğŠˆ«‰»
+        // ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æ´»æ€§åŒ–
         WindowMemo.Instance.ActivateContent(key);
-        Debug.Log($"{key} ‚ğŠˆ«‰»‚µ‚Ü‚µ‚½");
+        Debug.Log($"[PhotoLinkHandler] {key} ã‚’æ´»æ€§åŒ–ã—ã¾ã—ãŸ");
     }
 
-    // ƒŠƒ“ƒNID‚É‚æ‚Á‚ÄƒEƒBƒ“ƒhƒE‚ğŠJ‚­ƒƒ\ƒbƒh
+    // ãƒªãƒ³ã‚¯IDã«ã‚ˆã£ã¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ããƒ¡ã‚½ãƒƒãƒ‰
     private void OnLinkClicked(string id)
     {
-        // "memo_" ‚Ån‚Ü‚éê‡‚Íƒƒ‚ƒEƒBƒ“ƒhƒE‚ğŠJ‚¢‚ÄƒL[ƒ[ƒh‚ğŠˆ«‰»
+        // è¤‡åˆ ID: "+" ã§åŒºåˆ‡ã‚‰ã‚ŒãŸå ´åˆã¯å„éƒ¨åˆ†ã‚’å†å¸°çš„ã«å‡¦ç†
+        // ä¾‹: "memo_sakura+map_æ¡œè‡ªå®…" â†’ ãƒ¡ãƒ¢ã¨ãƒãƒƒãƒ—ã‚’åŒæ™‚èµ·å‹•
+        if (id.Contains("+"))
+        {
+            string[] parts = id.Split('+');
+            foreach (string part in parts)
+            {
+                string trimmed = part.Trim();
+                if (!string.IsNullOrEmpty(trimmed))
+                    OnLinkClicked(trimmed);
+            }
+            return;
+        }
+
+        // "memo_" ã§å§‹ã¾ã‚‹å ´åˆã¯ãƒ¡ãƒ¢ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã„ã¦ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è§£æ”¾
         if (id.StartsWith("memo_"))
         {
             string key = id.Replace("memo_", "");
-            Debug.Log("ƒƒ‚‚Ö‚ÌƒWƒƒƒ“ƒv: " + key);
+            Debug.Log("[PhotoLinkHandler] ãƒ¡ãƒ¢ã¸ã®ã‚¸ãƒ£ãƒ³ãƒ—: " + key);
             OpenWindowAndActivate(memoWindowData, key);
         }
-        // "map_" ‚Ån‚Ü‚éê‡‚Íƒ}ƒbƒvƒEƒBƒ“ƒhƒE‚ğŠJ‚¢‚Ä‰æ‘œ‚ğØ‚è‘Ö‚¦‚é
+        // "map_" ã§å§‹ã¾ã‚‹å ´åˆã¯ãƒãƒƒãƒ—ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã
         else if (id.StartsWith("map_"))
         {
             string key = id.Replace("map_", "");
-            Debug.Log("ƒ}ƒbƒv‚Ö‚ÌƒWƒƒƒ“ƒv: " + key);
+            Debug.Log("[PhotoLinkHandler] ãƒãƒƒãƒ—ã¸ã®ã‚¸ãƒ£ãƒ³ãƒ—: " + key);
 
-            // ƒ}ƒbƒvƒEƒBƒ“ƒhƒE‚ğŠJ‚­
+            // SNS çµŒç”±ã§ãƒ”ãƒ³ã‚’å…¬é–‹ï¼ˆMapPinDatabase ã«è¨˜éŒ²ã—ã€ãƒãƒƒãƒ—å†è¡¨ç¤ºæ™‚ã‚‚å¾©å…ƒï¼‰
+            MapPinDatabase.Instance?.RevealPin(key);
+
+            // ãƒãƒƒãƒ—ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã
             OpenWindow(mapWindowData);
 
-            // ‰æ‘œ‚ğØ‚è‘Ö‚¦‚é
-            StartCoroutine(SwitchMapAfterDelay(key));
+            // èˆªç©º/è¾²è€•ãƒãƒƒãƒ—åˆ‡ã‚Šæ›¿ãˆï¼ˆkouku/nokou/toggle ã‚­ãƒ¼ã®å ´åˆã®ã¿æœ‰åŠ¹ï¼‰
+            StartCoroutine(SwitchMapAfterWindowOpens(key));
         }
-        // ‚»‚êˆÈŠO‚ÌƒŠƒ“ƒN
+        // ä»¥å¤–ã®ãƒªãƒ³ã‚¯
         else
         {
-            Debug.Log("ƒŠƒ“ƒN‚ğƒNƒŠƒbƒN: " + id);
+            Debug.Log("[PhotoLinkHandler] ä¸æ˜ãªã‚¯ãƒªãƒƒã‚¯: " + id);
             OpenWindow(defaultWindowData);
         }
     }
 
-    // w’è•b”Œã‚Éƒ}ƒbƒv‰æ‘œ‚ğØ‚è‘Ö‚¦‚éƒRƒ‹[ƒ`ƒ“
-    private IEnumerator SwitchMapAfterDelay(string key)
+    /// <summary>
+    /// MapKoukuController.ActiveInstance ãŒæœ‰åŠ¹ã«ãªã‚‹ã¾ã§å¾…ã£ã¦ã‹ã‚‰èˆªç©º/è¾²è€•ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹ã€‚
+    /// kouku/nokou/toggle ä»¥å¤–ã®ã‚­ãƒ¼ã¯ãƒ”ãƒ³IDã¨ã—ã¦ç„¡è¦–ã™ã‚‹ï¼ˆRevealPinã§æ—¢ã«å‡¦ç†æ¸ˆã¿ï¼‰ã€‚
+    /// </summary>
+    private IEnumerator SwitchMapAfterWindowOpens(string key)
     {
-        // ƒEƒBƒ“ƒhƒE‚ªŠJ‚­‚Ì‚ğ‘Ò‚Â
-        yield return new WaitForSeconds(activateDelay);
+        // kouku / nokou / toggle ä»¥å¤–ã¯ãƒãƒƒãƒ—åˆ‡ã‚Šæ›¿ãˆãªã—ï¼ˆãƒ”ãƒ³è¡¨ç¤ºã®ã¿ï¼‰
+        if (key != "kouku" && key != "nokou" && key != "toggle")
+            yield break;
+
+        float elapsed = 0f;
+
+        // MapKoukuController.ActiveInstance ãŒã‚»ãƒƒãƒˆã•ã‚Œã‚‹ã¾ã§å¾…ã¤
+        while (MapKoukuController.ActiveInstance == null && elapsed < waitTimeout)
+        {
+            yield return null;
+            elapsed += Time.unscaledDeltaTime;
+        }
 
         if (MapKoukuController.ActiveInstance == null)
         {
-            Debug.LogWarning("MapKoukuController.ActiveInstance ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+            Debug.LogWarning("[PhotoLinkHandler] MapKoukuController.ActiveInstance ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
             yield break;
         }
 
-        // ƒL[‚É‚æ‚Á‚Äƒ}ƒbƒv‚ğØ‚è‘Ö‚¦‚é
+        // ã‚­ãƒ¼ã«ã‚ˆã£ã¦ãƒãƒƒãƒ—ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
         switch (key)
         {
             case "kouku":
                 MapKoukuController.ActiveInstance.ShowKoukuOn();
-                Debug.Log("Z‹æü‚ ‚èƒ}ƒbƒv‚ÉØ‚è‘Ö‚¦‚Ü‚µ‚½");
+                Debug.Log("[PhotoLinkHandler] æ ¡åŒºç·šã‚ã‚Šãƒãƒƒãƒ—ã«åˆ‡ã‚Šæ›¿ãˆã¾ã—ãŸ");
                 break;
             case "nokou":
                 MapKoukuController.ActiveInstance.ShowKoukuOff();
-                Debug.Log("Z‹æü‚È‚µƒ}ƒbƒv‚ÉØ‚è‘Ö‚¦‚Ü‚µ‚½");
+                Debug.Log("[PhotoLinkHandler] æ ¡åŒºç·šãªã—ãƒãƒƒãƒ—ã«åˆ‡ã‚Šæ›¿ãˆã¾ã—ãŸ");
                 break;
             case "toggle":
                 MapKoukuController.ActiveInstance.ToggleKouku();
-                Debug.Log("Z‹æü‚Ì•\¦‚ğØ‚è‘Ö‚¦‚Ü‚µ‚½");
-                break;
-            default:
-                Debug.LogWarning("•s–¾‚Èƒ}ƒbƒvƒL[: " + key);
+                Debug.Log("[PhotoLinkHandler] æ ¡åŒºç·šã®è¡¨ç¤ºã‚’åˆ‡ã‚Šæ›¿ãˆã¾ã—ãŸ");
                 break;
         }
     }

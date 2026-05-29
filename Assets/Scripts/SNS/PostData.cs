@@ -3,22 +3,23 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PostData", menuName = "SNS/Post Data")]
 public class PostData : ScriptableObject
 {
-    [Header("ƒAƒJƒEƒ“ƒgî•ñ")]
-    public string accountName;      // —á: "user_taro"
-    public Sprite accountIcon;      // ƒvƒƒtƒB[ƒ‹‰æ‘œ
+    [Header("ã‚¢ã‚«ã‚¦ãƒ³ãƒˆæƒ…å ±")]
+    public string accountName;      // ä¾‹: "user_taro"
+    public Sprite accountIcon;      // ãƒ—ãƒ­ãƒ•ã‚£ãƒ¼ãƒ«ç”»åƒ
+    public Color avatarColor = new Color(0.1f, 0.45f, 1f, 1f); // ç”»åƒãŒãªã„å ´åˆã®èƒŒæ™¯è‰²ï¼ˆTwitterç”¨ï¼‰
 
-    [Header("“Še“à—e")]
-    public Sprite postPhoto;        // “ŠeÊ^
+    [Header("æŠ•ç¨¿å†…å®¹")]
+    public Sprite postPhoto;        // æŠ•ç¨¿å†™çœŸ
     [TextArea(2, 5)]
-    public string caption;          // “Še•¶Í
+    public string caption;          // æŠ•ç¨¿æ–‡ç« 
 
-    [Header("ƒGƒ“ƒQ[ƒWƒƒ“ƒg")]
+    [Header("ã‚¨ãƒ³ã‚²ãƒ¼ã‚¸ãƒ¡ãƒ³ãƒˆ")]
     public int likeCount;
-    public string timeAgo;          // —á: "2ŠÔ‘O"
+    public string timeAgo;          // ä¾‹: "2æ™‚é–“å‰"
 
-    [Header("‰æ‘œƒŠƒ“ƒN")]
-    // ‰æ‘œ‚ğƒNƒŠƒbƒN‚µ‚½‚Æ‚«‚É”­‰Î‚·‚éƒŠƒ“ƒNID
-    // —á: "memo_Key1" "map_Tokyo" ‹ó—“‚È‚ç‰½‚à‚µ‚È‚¢
+    [Header("ç”»åƒãƒªãƒ³ã‚¯")]
+    // ç”»åƒã‚’ã‚¯ãƒªãƒƒã‚¯ã—ãŸã¨ãã«ç™ºç«ã™ã‚‹ãƒªãƒ³ã‚¯ID
+    // ä¾‹: "memo_Key1" "map_Tokyo" ç©ºæ¬„ãªã‚‰ä½•ã‚‚ã—ãªã„
     public string photoLinkID;
 
 }
