@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: PostTW_ 1
   m_EditorClassIdentifier: 
   accountName: saku
-  accountIcon: {fileID: -4282639069294142226, guid: faa04ed50336e214694a6167321ee59d, type: 3}
+  accountIcon: {fileID: -2879073556270161242, guid: a56002375eb5ee048a1990544cc8c1fc, type: 3}
   avatarColor: {r: 0.1, g: 0.45, b: 1, a: 1}
   postPhoto: {fileID: -1614409083385094767, guid: 5541e94d6ea0ea54599bbcc8bd5b9f16, type: 3}
-  caption: "<color=#4A90D9><link=\"memo_Family\">\u521D\u3081\u3066\u306E\u6295\u7A3F</link>
-    </color>\u3067\u3059 \nwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  caption: "\u30E9\u30F3\u30C9\u30BB\u30EB\u306B\u866B\u3064\u3044\u3066\u3066\u9854\u306A\u3044\u3002\u4ECA\u3053\u308C
+    \n<color=#4A90D9>#jc</color> \n"
   likeCount: 12
   timeAgo: 4hours
-  photoLinkID: memo_Face+map_kouku
+  photoLinkID: memo_Name

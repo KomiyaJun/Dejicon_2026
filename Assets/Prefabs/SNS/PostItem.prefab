@@ -92,7 +92,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 111.422775, y: 5.1208}
+  m_AnchoredPosition: {x: -125.59, y: 5.1208}
   m_SizeDelta: {x: 95.7023, y: 24.3099}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2337894716194282575
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 111
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f80b1da193eca27418ec7eff49720b19, type: 2}
   m_sharedMaterial: {fileID: -5210807662615304189, guid: f80b1da193eca27418ec7eff49720b19, type: 2}
@@ -230,7 +230,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 29.173, y: -0.0000026226}
+  m_AnchoredPosition: {x: -187.31, y: -0.0000026226}
   m_SizeDelta: {x: 58.3458, y: 34.5516}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5972021948242444021
@@ -913,7 +913,7 @@ MonoBehaviour:
   memoWindowData: {fileID: 11400000, guid: 4789578288253f54f8fe37c0c87ffad8, type: 2}
   mapWindowData: {fileID: 11400000, guid: 3efb7764c5fc49645942c9353d1b6f1d, type: 2}
   defaultWindowData: {fileID: 0}
-  activateDelay: 0.5
+  waitTimeout: 5
 --- !u!114 &2262183576926285599
 MonoBehaviour:
   m_ObjectHideFlags: 0

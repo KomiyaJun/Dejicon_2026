@@ -7,6 +7,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MapPinData", menuName = "Map/MapPinData")]
 public class MapPinData : ScriptableObject
 {
+    [Header("エディタープレビュー用マップ画像")]
+    public Texture2D previewMapTexture;
+
     [System.Serializable]
     public class PinEntry
     {

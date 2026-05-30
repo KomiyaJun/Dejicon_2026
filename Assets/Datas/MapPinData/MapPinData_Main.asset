@@ -12,14 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6789012345678abcdef01, type: 3}
   m_Name: MapPinData_Main
   m_EditorClassIdentifier: 
+  previewMapTexture: {fileID: 2800000, guid: 7c2df5fecb5d2544fa563ab32ba8dec1, type: 3}
   pins:
-  - pinId: house
-    normalizedPosition: {x: 0.52, y: 0.55}
+  - pinId: House
+    normalizedPosition: {x: 0.47204968, y: 0.378882}
     showArrow: 0
     arrowRotationZ: 0
     label: "\u685C\u81EA\u5B85"
-  - pinId: Photo
-    normalizedPosition: {x: 0.48, y: 0.5}
-    showArrow: 1
+  - pinId: SakuraSchool
+    normalizedPosition: {x: 0.45873785, y: 0.67636365}
+    showArrow: 0
     arrowRotationZ: 70
-    label: "\u5199\u771F\u30B9\u30DD\u30C3\u30C8"
+    label: "\u685C\u30F6\u4E18\u5C0F\u5B66\u6821"
+  - pinId: Grave
+    normalizedPosition: {x: 0.55693585, y: 0.7158385}
+    showArrow: 0
+    arrowRotationZ: 70
+    label: "\u5893"
+  - pinId: Park
+    normalizedPosition: {x: 0.67287785, y: 0.5838509}
+    showArrow: 0
+    arrowRotationZ: 70
+    label: "\u307F\u3069\u308A\u516C\u5712"
+  - pinId: Cafe
+    normalizedPosition: {x: 0.5, y: 0.46118012}
+    showArrow: 0
+    arrowRotationZ: 70
+    label: "\u81EA\u5B85\u8FD1\u304F\u306E\u30AB\u30D5\u30A7"

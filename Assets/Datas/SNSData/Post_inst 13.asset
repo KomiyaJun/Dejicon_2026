@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cdc8e67313f4124f9c17d233409887b, type: 3}
+  m_Name: Post_inst 13
+  m_EditorClassIdentifier: 
+  accountName: saku
+  accountIcon: {fileID: -2879073556270161242, guid: a56002375eb5ee048a1990544cc8c1fc, type: 3}
+  avatarColor: {r: 0.1, g: 0.45, b: 1, a: 1}
+  postPhoto: {fileID: -1614409083385094767, guid: 5541e94d6ea0ea54599bbcc8bd5b9f16, type: 3}
+  caption: "\u524D\u9AEA\u30DF\u30B9\u3063\u305F\uFF01"
+  likeCount: 12
+  timeAgo: 2 hour
+  photoLinkID: 

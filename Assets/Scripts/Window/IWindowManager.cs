@@ -1,15 +1,17 @@
 using UnityEngine;
 
-// WindowManager‚ªÀ‘•‚·‚×‚«ƒCƒ“ƒ^[ƒtƒF[ƒX
+// WindowManagerãŒå®Ÿè£…ã™ã¹ãã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 public interface IWindowManager
 {
     void OpenWindow(WindowData data);
     void CloseWindow(WindowData data);
-    // ’Ç‰ÁFƒEƒBƒ“ƒhƒE‚ª•\¦’†‚©‚Ç‚¤‚©‚ğ”»’è‚·‚é
+    // è¿½åŠ ï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒè¡¨ç¤ºä¸­ã‹ã©ã†ã‹ã‚’åˆ¤å®šã™ã‚‹
     bool IsWindowVisible(WindowData data);
+    // è¿½åŠ : ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ã•ã‚Œã¦ã„ã‚‹Windowã‚’å–å¾—ã™ã‚‹
+    WindowBase GetWindow(WindowData data);
 }
 
-// ƒEƒBƒ“ƒhƒEƒVƒXƒeƒ€—p‚ÌƒT[ƒrƒXƒƒP[ƒ^
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚·ã‚¹ãƒ†ãƒ ç”¨ã®ã‚µãƒ¼ãƒ“ã‚¹ãƒ­ã‚±ãƒ¼ã‚¿
 public static class WindowService
 {
     public static IWindowManager Instance { get; private set; }

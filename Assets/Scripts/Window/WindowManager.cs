@@ -12,7 +12,7 @@ public class WindowManager : MonoBehaviour, IWindowManager
         WindowService.Provide(this);
     }
 
-    // ’Ç‰ÁFw’è‚³‚ê‚½ƒf[ƒ^‚ÌƒEƒBƒ“ƒhƒE‚ª‘¶İ‚µA‚©‚ÂƒAƒNƒeƒBƒui•\¦’†j‚©‚ğ•Ô‚·
+    // è¿½åŠ ï¼šæŒ‡å®šã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒå­˜åœ¨ã—ã€ã‹ã¤ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ï¼ˆè¡¨ç¤ºä¸­ï¼‰ã‹ã‚’è¿”ã™
     public bool IsWindowVisible(WindowData data)
     {
         if (data == null) return false;
@@ -41,5 +41,15 @@ public class WindowManager : MonoBehaviour, IWindowManager
         {
             window.Close();
         }
+    }
+
+    public WindowBase GetWindow(WindowData data)
+    {
+        if (data == null) return null;
+        if (instantiatedWindows.TryGetValue(data, out var window))
+        {
+            return window;
+        }
+        return null;
     }
 }
