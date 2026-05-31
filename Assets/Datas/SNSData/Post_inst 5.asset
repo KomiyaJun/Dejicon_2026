@@ -15,7 +15,7 @@ MonoBehaviour:
   accountName: saku
   accountIcon: {fileID: -2879073556270161242, guid: a56002375eb5ee048a1990544cc8c1fc, type: 3}
   avatarColor: {r: 0.1, g: 0.45, b: 1, a: 1}
-  postPhoto: {fileID: -1614409083385094767, guid: 5541e94d6ea0ea54599bbcc8bd5b9f16, type: 3}
+  postPhoto: {fileID: -4787813550311441029, guid: 00e5aa87c005dfc4daa85f89e01568e1, type: 3}
   caption: "\u65B0\u4F5C\u30EA\u30C3\u30D7\u3001\u8272\u304C\u795E\u3002\u5C0F\u5B66\u751F\u3067\u3082\u4F7F\u3044\u3084\u3059\u3044\u304B\u3089\u304A\u3059\u3059\u3081\uFF01\n<color=#4A90D9>#\u30EA\u30C3\u30D7
     #\u65B0\u4F5C</color> "
   likeCount: 12
