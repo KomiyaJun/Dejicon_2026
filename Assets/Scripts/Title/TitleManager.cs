@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using MyGame;
+using MyGame.AudioSetting;
 
 /// <summary>
 /// タイトル画面全体を管理するクラス。
@@ -23,8 +25,9 @@ public class TitleManager : MonoBehaviour
     [SerializeField] private float bgFadeInDuration = 2.0f;
 
     [Header("BGM")]
-    [SerializeField] private AudioSource bgmSource;
-    [SerializeField] private AudioClip bgmClip;
+    //[SerializeField] private AudioSource bgmSource;
+    //[SerializeField] private AudioClip bgmClip;
+    [SerializeField] private SoundData bgmData;
 
     [Header("Fade")]
     [SerializeField] private float fadeOutDuration = 1.5f;
@@ -40,7 +43,8 @@ public class TitleManager : MonoBehaviour
     private void Start()
     {
         SetBackgroundAlpha(0f);
-        PlayBGM();
+        //PlayBGM();
+        SoundService.Instance.PlayBGM(bgmData);
         StartCoroutine(OpeningSequence());
     }
 
@@ -98,7 +102,7 @@ public class TitleManager : MonoBehaviour
     /// <summary>フェードアウト → シーンロード</summary>
     private IEnumerator FadeOutAndLoad(string sceneName)
     {
-        StartCoroutine(FadeBGM(fadeOutDuration));
+        //StartCoroutine(FadeBGM(fadeOutDuration));
 
         if (FadeManager.Instance != null)
             yield return StartCoroutine(FadeManager.Instance.FadeOut(fadeOutDuration));
@@ -136,29 +140,29 @@ public class TitleManager : MonoBehaviour
     // BGM
     // ─────────────────────────────────────────
 
-    private void PlayBGM()
-    {
-        if (bgmSource == null || bgmClip == null) return;
-        bgmSource.clip = bgmClip;
-        bgmSource.loop = true;
-        bgmSource.Play();
-    }
+    //private void PlayBGM()
+    //{
+    //    if (bgmSource == null || bgmClip == null) return;
+    //    bgmSource.clip = bgmClip;
+    //    bgmSource.loop = true;
+    //    bgmSource.Play();
+    //}
 
-    private IEnumerator FadeBGM(float duration)
-    {
-        if (bgmSource == null) yield break;
+    //private IEnumerator FadeBGM(float duration)
+    //{
+    //    if (bgmSource == null) yield break;
 
-        float startVolume = bgmSource.volume;
-        float elapsed = 0f;
+    //    float startVolume = bgmSource.volume;
+    //    float elapsed = 0f;
 
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            bgmSource.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
-            yield return null;
-        }
+    //    while (elapsed < duration)
+    //    {
+    //        elapsed += Time.deltaTime;
+    //        bgmSource.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
+    //        yield return null;
+    //    }
 
-        bgmSource.Stop();
-        bgmSource.volume = startVolume;
-    }
+    //    bgmSource.Stop();
+    //    bgmSource.volume = startVolume;
+    //}
 }

@@ -1,9 +1,14 @@
+using MyGame.AudioSetting;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EpisodeManager : MonoBehaviour
 {
     // どんなシーンのイニシャライザでも、これ1つで受け止められる
     [SerializeField] private BaseSceneInitiator sceneInitiator;
+
+    [SerializeField] private bool isSoundPlay = false;
+    [SerializeField] private SoundData bgmData;
 
     private void Start()
     {
@@ -17,9 +22,19 @@ public class EpisodeManager : MonoBehaviour
         if (SceneTransitionManager.Instance != null)
         {
             SceneTransitionManager.Instance.OnTransitionComplete += StartEpisode;
+
+            if (isSoundPlay)
+            {
+                SoundService.Instance.PlayBGM(bgmData);
+            }
         }
         else
         {
+            if (isSoundPlay)
+            {
+                SoundService.Instance.PlayBGM(bgmData);
+            }
+
             StartEpisode();
         }
     }

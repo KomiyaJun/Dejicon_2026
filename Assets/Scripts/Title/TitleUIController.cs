@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using MyGame.AudioSetting;
 
 /// <summary>
 /// タイトル画面のUIを管理するクラス。
@@ -37,11 +38,13 @@ public class TitleUIController : MonoBehaviour
     [SerializeField] private float colorFadeDuration = 0.12f;
 
     [Header("SE (任意)")]
-    [SerializeField] private AudioSource seSource;
-    [SerializeField] private AudioClip buttonClickSE;
-    [SerializeField] private AudioClip buttonHoverSE;
-    [SerializeField] private AudioClip anyKeySE;
-
+    //[SerializeField] private AudioSource seSource;
+    //[SerializeField] private AudioClip buttonClickSE;
+    //[SerializeField] private AudioClip buttonHoverSE;
+    //[SerializeField] private AudioClip anyKeySE;
+    [SerializeField] private SoundData buttonClickData;
+    [SerializeField] private SoundData buttonHoverData;
+    [SerializeField] private SoundData anyKeyData;
     // ─────────────────────────────────────────
     // Private
     // ─────────────────────────────────────────
@@ -124,7 +127,8 @@ public class TitleUIController : MonoBehaviour
         inputLocked = true;
         phase = TitlePhase.ButtonSelect;
 
-        PlaySE(anyKeySE);
+        //PlaySE(anyKeySE);
+        PlaySE(anyKeyData);
 
         // PressAnyKey の点滅を止めてフェードアウト
         if (blinkCoroutine != null) StopCoroutine(blinkCoroutine);
@@ -170,7 +174,7 @@ public class TitleUIController : MonoBehaviour
         // 選択が変わった場合のみ色を更新
         if (selectedIndex != prev)
         {
-            PlaySE(buttonHoverSE);
+            PlaySE(buttonHoverData);
             TweenColor(prev, normalColor);
             ApplySelectedColor(selectedIndex);
         }
@@ -179,7 +183,7 @@ public class TitleUIController : MonoBehaviour
     private void ExecuteSelectedButton()
     {
         if (selectedIndex < 0 || selectedIndex >= buttons.Count) return;
-        PlaySE(buttonClickSE);
+        PlaySE(buttonClickData);
         buttons[selectedIndex].onClick.Invoke();
     }
 
@@ -212,7 +216,8 @@ public class TitleUIController : MonoBehaviour
     private void OnButtonClicked(int index)
     {
         if (!TryBeginTransition()) return;
-        PlaySE(buttonClickSE);
+        //PlaySE(buttonClickSE);
+        PlaySE(buttonClickData);
         InvokeButtonAction(index);
     }
 
@@ -224,7 +229,8 @@ public class TitleUIController : MonoBehaviour
             TweenColor(selectedIndex, normalColor);
             selectedIndex = index;
         }
-        PlaySE(buttonHoverSE);
+        //PlaySE(buttonHoverSE);
+        PlaySE(buttonHoverData);
         ApplySelectedColor(index);
     }
 
@@ -363,9 +369,10 @@ public class TitleUIController : MonoBehaviour
         trigger.triggers.Add(entry);
     }
 
-    private void PlaySE(AudioClip clip)
+    private void PlaySE(SoundData data)
     {
-        if (seSource != null && clip != null)
-            seSource.PlayOneShot(clip);
+        SoundService.Instance.PlaySE(data);
+        //if (seSource != null && clip != null)
+        //    seSource.PlayOneShot(clip);
     }
 }
