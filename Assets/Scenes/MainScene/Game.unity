@@ -768,6 +768,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3673716695082309442, guid: 6920915e239a4a341b48f6aaa035ce3d, type: 3}
+      propertyPath: bgmData
+      value: 
+      objectReference: {fileID: 11400000, guid: b09cb6f57aa02c0448e221ebbc9f8362, type: 2}
+    - target: {fileID: 3673716695082309442, guid: 6920915e239a4a341b48f6aaa035ce3d, type: 3}
+      propertyPath: isSoundPlay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3673716695082309442, guid: 6920915e239a4a341b48f6aaa035ce3d, type: 3}
       propertyPath: sceneInitiator
       value: 
       objectReference: {fileID: 1321635623}

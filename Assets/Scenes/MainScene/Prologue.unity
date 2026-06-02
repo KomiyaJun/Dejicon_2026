@@ -953,6 +953,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3673716695082309442, guid: 6920915e239a4a341b48f6aaa035ce3d, type: 3}
+      propertyPath: bgmData
+      value: 
+      objectReference: {fileID: 11400000, guid: b0b1939a9a11e8d4fbee3680ca71a81e, type: 2}
+    - target: {fileID: 3673716695082309442, guid: 6920915e239a4a341b48f6aaa035ce3d, type: 3}
+      propertyPath: isSoundPlay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3673716695082309442, guid: 6920915e239a4a341b48f6aaa035ce3d, type: 3}
       propertyPath: sceneInitiator
       value: 
       objectReference: {fileID: 1147467583}
@@ -1056,7 +1064,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: baa56e373568c644fad502b9dc752ad6, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1340,8 +1348,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slideData: {fileID: 11400000, guid: 23616bbe91f9fb641aadfad6d9a853ab, type: 2}
   gameSceneName: Game
-  bgmSource: {fileID: 340586912}
-  bgmFadeDuration: 1
+  ClickSEData: {fileID: 11400000, guid: 4747783ae9e1c63439ea26c6f627fb86, type: 2}
   allowSkip: 1
   allowFullSkip: 1
 --- !u!4 &2124938890

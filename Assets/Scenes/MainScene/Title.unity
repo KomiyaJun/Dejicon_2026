@@ -401,10 +401,9 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0.18, g: 0.95, b: 0.95, a: 1}
   colorFadeDuration: 0.12
-  seSource: {fileID: 0}
-  buttonClickSE: {fileID: 0}
-  buttonHoverSE: {fileID: 0}
-  anyKeySE: {fileID: 0}
+  buttonClickData: {fileID: 11400000, guid: 4747783ae9e1c63439ea26c6f627fb86, type: 2}
+  buttonHoverData: {fileID: 11400000, guid: 4747783ae9e1c63439ea26c6f627fb86, type: 2}
+  anyKeyData: {fileID: 11400000, guid: 4747783ae9e1c63439ea26c6f627fb86, type: 2}
 --- !u!114 &237331788
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -421,8 +420,7 @@ MonoBehaviour:
   creditSceneName: Credit
   backgroundImage: {fileID: 1154279665}
   bgFadeInDuration: 2
-  bgmSource: {fileID: 307326}
-  bgmClip: {fileID: 8300000, guid: dc6614beca09347ec9b258f12d154bdd, type: 3}
+  bgmData: {fileID: 11400000, guid: a2578195e7006fe438e387b550285633, type: 2}
   fadeOutDuration: 1
   fadeInDuration: 1
 --- !u!4 &237331789

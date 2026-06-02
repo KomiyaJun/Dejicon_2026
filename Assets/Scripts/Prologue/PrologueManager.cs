@@ -1,3 +1,4 @@
+using MyGame.AudioSetting;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,8 +20,10 @@ public class PrologueManager : MonoBehaviour
     [SerializeField] private string gameSceneName = "GameScene";
 
     [Header("BGM")]
-    [SerializeField] private AudioSource bgmSource;
-    [SerializeField] private float bgmFadeDuration = 1.0f;
+    //[SerializeField] private AudioSource bgmSource;
+    //[SerializeField] private float bgmFadeDuration = 1.0f;
+    
+    [SerializeField] SoundData ClickSEData;
 
     [Header("Skip")]
     [Tooltip("クリック / エンターキーでセリフを送れるか")]
@@ -81,6 +84,7 @@ public class PrologueManager : MonoBehaviour
         if (allowSkip &&
             (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)))
         {
+            PlaySE(ClickSEData);
             inputReceived = true;
         }
     }
@@ -101,8 +105,8 @@ public class PrologueManager : MonoBehaviour
         if (FadeManager.Instance != null)
             yield return StartCoroutine(FadeManager.Instance.FadeIn());
 
-        // BGM 再生
-        HandleBGM(slideData.bgm);
+        //// BGM 再生
+        //HandleBGM(slideData.bgm);
 
         // ── 1. 背景画像をフェードイン（1回だけ）──────
         lineState = LineState.ImageFading;
@@ -171,7 +175,7 @@ public class PrologueManager : MonoBehaviour
         isTransitioning = true;
 
         uiController.HideSkipHint();
-        StartCoroutine(FadeBGM(bgmFadeDuration));
+        //StartCoroutine(FadeBGM(bgmFadeDuration));
 
         if (FadeManager.Instance != null)
             yield return StartCoroutine(FadeManager.Instance.FadeOut());
@@ -181,32 +185,37 @@ public class PrologueManager : MonoBehaviour
     }
 
     // ─────────────────────────────────────────
-    // BGM
+    // SOUND
     // ─────────────────────────────────────────
 
-    private void HandleBGM(AudioClip clip)
+    private void PlaySE(SoundData data)
     {
-        if (bgmSource == null || clip == null) return;
-        bgmSource.clip = clip;
-        bgmSource.loop = true;
-        bgmSource.Play();
+        SoundService.Instance.PlaySE(data);
     }
 
-    private IEnumerator FadeBGM(float duration)
-    {
-        if (bgmSource == null || !bgmSource.isPlaying) yield break;
+    //private void HandleBGM(AudioClip clip)
+    //{
+    //    if (bgmSource == null || clip == null) return;
+    //    bgmSource.clip = clip;
+    //    bgmSource.loop = true;
+    //    bgmSource.Play();
+    //}
 
-        float startVolume = bgmSource.volume;
-        float elapsed = 0f;
+    //private IEnumerator FadeBGM(float duration)
+    //{
+    //    if (bgmSource == null || !bgmSource.isPlaying) yield break;
 
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            bgmSource.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
-            yield return null;
-        }
+    //    float startVolume = bgmSource.volume;
+    //    float elapsed = 0f;
 
-        bgmSource.Stop();
-        bgmSource.volume = startVolume;
-    }
+    //    while (elapsed < duration)
+    //    {
+    //        elapsed += Time.deltaTime;
+    //        bgmSource.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
+    //        yield return null;
+    //    }
+
+    //    bgmSource.Stop();
+    //    bgmSource.volume = startVolume;
+    //}
 }
