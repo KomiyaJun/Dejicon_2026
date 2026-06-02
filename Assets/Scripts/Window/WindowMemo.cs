@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
+using MyGame.AudioSetting;
 
 public class WindowMemo : WindowBase
 {
@@ -20,6 +21,10 @@ public class WindowMemo : WindowBase
     [Header("全キーワード解放時に表示するボタン")]
     // 全キーワードが揃ったときに表示するボタン
     [SerializeField] private GameObject allUnlockedButton;
+
+
+    [Header("音関連")]
+    [SerializeField] private SoundData pencilData;
 
     protected override async UniTask OnOpen()
     {
@@ -67,6 +72,7 @@ public class WindowMemo : WindowBase
             {
                 GameDataManager.Instance.Unlock(key);
                 Debug.Log($"{key} を活性化しました");
+                PlaySE(pencilData);
             }
             else
             {
@@ -104,5 +110,10 @@ public class WindowMemo : WindowBase
     {
         await base.OnClose();
         if (Instance == this) Instance = null;
+    }
+
+    private void PlaySE(SoundData data)
+    {
+        SoundService.Instance.PlaySE(data);
     }
 }

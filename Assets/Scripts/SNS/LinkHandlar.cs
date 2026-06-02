@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using MyGame.AudioSetting;
 
 public class LinkHandler : MonoBehaviour, IPointerClickHandler
 {
@@ -30,6 +31,9 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
 
     // ウィンドウを生成する親オブジェクト（Awakeで自動取得）
     private Transform windowParent;
+
+    [Header("音関連")]
+    [SerializeField] private SoundData clickData;
 
     private void Awake()
     {
@@ -185,6 +189,8 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
             Debug.Log("リンクをクリック: " + linkID);
             OpenWindow(defaultWindowData);
         }
+
+        PlaySE(clickData);
     }
 
     // 指定秒数後にマップ画像を切り替えるコルーチン
@@ -221,5 +227,10 @@ public class LinkHandler : MonoBehaviour, IPointerClickHandler
                 Debug.LogWarning("不明なマップキー: " + key);
                 break;
         }
+    }
+
+    private void PlaySE(SoundData data)
+    {
+        SoundService.Instance.PlaySE(data);
     }
 }

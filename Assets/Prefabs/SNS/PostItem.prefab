@@ -473,6 +473,7 @@ MonoBehaviour:
   mapWindowData: {fileID: 11400000, guid: 3efb7764c5fc49645942c9353d1b6f1d, type: 2}
   defaultWindowData: {fileID: 0}
   activateDelay: 0.5
+  clickData: {fileID: 11400000, guid: 4747783ae9e1c63439ea26c6f627fb86, type: 2}
 --- !u!114 &8340282729830486637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -914,6 +915,7 @@ MonoBehaviour:
   mapWindowData: {fileID: 11400000, guid: 3efb7764c5fc49645942c9353d1b6f1d, type: 2}
   defaultWindowData: {fileID: 0}
   waitTimeout: 5
+  clickData: {fileID: 11400000, guid: 4747783ae9e1c63439ea26c6f627fb86, type: 2}
 --- !u!114 &2262183576926285599
 MonoBehaviour:
   m_ObjectHideFlags: 0
