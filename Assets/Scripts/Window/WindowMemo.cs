@@ -37,11 +37,9 @@ public class WindowMemo : WindowBase
                 setting.targetObj.SetActive(false);
         }
 
-        // ボタンも非表示にする
         if (allUnlockedButton != null)
             allUnlockedButton.SetActive(false);
 
-        // アニメーション完了を待つ
         await base.OnOpen();
 
         // アニメーション後に解放済みのものだけ表示する
@@ -51,14 +49,20 @@ public class WindowMemo : WindowBase
             {
                 bool isUnlocked = GameDataManager.Instance.IsUnlocked(setting.keyword);
                 if (setting.targetObj != null)
+                {
                     setting.targetObj.SetActive(isUnlocked);
+
+                    // 【追記】すでに解放済みのものは、演出なしで文字を表示状態(Alpha=1)にする
+                    if (isUnlocked && setting.targetObj.TryGetComponent<MemoEffect>(out var effect))
+                    {
+                        effect.SetUnlockedState();
+                    }
+                }
             }
         }
 
-        // 全キーワードが揃っているか確認する
         CheckAllUnlocked();
     }
-
     // キーワードを活性化するメソッド
     public void ActivateContent(string key)
     {
@@ -66,8 +70,20 @@ public class WindowMemo : WindowBase
 
         if (setting.targetObj != null)
         {
-            setting.targetObj.SetActive(true);
+            // 【変更】ただSetActive(true)するのではなく、演出コンポーネントがあれば再生する
+            if (setting.targetObj.TryGetComponent<MemoEffect>(out var effect))
+            {
+                // Forget() を使うことで、このメソッド自体の処理の流れ（SE再生や解放データ更新）を止めずに
+                // バックグラウンドで非同期に演出アニメーションを実行できます。
+                effect.PlayAnimationAsync(destroyCancellationToken).Forget();
+            }
+            else
+            {
+                // 万が一コンポーネントがついてない場合は、従来通りの挙動にする
+                setting.targetObj.SetActive(true);
+            }
 
+            // --- 以下の処理内容は一切変更していません ---
             if (GameDataManager.Instance != null)
             {
                 GameDataManager.Instance.Unlock(key);
@@ -79,7 +95,6 @@ public class WindowMemo : WindowBase
                 Debug.LogWarning("GameDataManager.Instance が見つかりません");
             }
 
-            // キーワードを活性化するたびに全キーワードが揃ったか確認する
             CheckAllUnlocked();
         }
         else
@@ -87,7 +102,6 @@ public class WindowMemo : WindowBase
             Debug.LogWarning($"{key} に対応するオブジェクトが見つかりません");
         }
     }
-
     // 全キーワードが揃ったか確認するメソッド
     private void CheckAllUnlocked()
     {
