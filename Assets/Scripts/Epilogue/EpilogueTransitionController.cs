@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.EventSystems;
+using MyGame.AudioSetting;
 
 public class EpilogueTransitionController : MonoBehaviour, IPointerClickHandler
 {
@@ -23,6 +24,9 @@ public class EpilogueTransitionController : MonoBehaviour, IPointerClickHandler
 
     // プレハブのボタンからでも呼べるようにシングルトン化
     public static EpilogueTransitionController Instance { get; private set; }
+
+    [Header("音関連")]
+    [SerializeField] private SoundData ClickData;
 
     private void Awake()
     {
@@ -71,6 +75,8 @@ public class EpilogueTransitionController : MonoBehaviour, IPointerClickHandler
         {
             isWaitingForClick = false; // 連打防止
 
+            PlaySE(ClickData);
+            SoundService.Instance.StopBGM();
             // SceneTransitionManager が存在すればそれを使ってトランジション遷移
             if (SceneTransitionManager.Instance != null)
             {
@@ -82,5 +88,10 @@ public class EpilogueTransitionController : MonoBehaviour, IPointerClickHandler
                 SceneManager.LoadScene(nextSceneName);
             }
         }
+    }
+
+    private void PlaySE(SoundData data)
+    {
+        SoundService.Instance.PlaySE(data);
     }
 }

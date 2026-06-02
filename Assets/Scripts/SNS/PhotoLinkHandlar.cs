@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using MyGame.AudioSetting;
 
 public class PhotoLinkHandler : MonoBehaviour
 {
@@ -20,6 +21,9 @@ public class PhotoLinkHandler : MonoBehaviour
     [SerializeField] private WindowData defaultWindowData;
     // WindowMemo.Instance が null の場合に待機するタイムアウト秒数
     [SerializeField] private float waitTimeout = 5.0f;
+
+    [Header("音関連")]
+    [SerializeField] private SoundData clickData;
 
     // 画像のImageコンポーネント
     private Image photoImage;
@@ -193,6 +197,8 @@ public class PhotoLinkHandler : MonoBehaviour
             Debug.Log("[PhotoLinkHandler] 不明なクリック: " + id);
             OpenWindow(defaultWindowData);
         }
+
+        PlaySE(clickData);
     }
 
     /// <summary>
@@ -236,5 +242,10 @@ public class PhotoLinkHandler : MonoBehaviour
                 Debug.Log("[PhotoLinkHandler] 校区線の表示を切り替えました");
                 break;
         }
+    }
+
+    private void PlaySE(SoundData data)
+    {
+        SoundService.Instance.PlaySE(data);
     }
 }

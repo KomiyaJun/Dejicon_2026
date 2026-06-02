@@ -103,3 +103,6 @@ MonoBehaviour:
   animationDuration: 0.2
   openEase: 27
   closeEase: 26
+  windowLabelText: {fileID: 0}
+  windowLabelImage: {fileID: 0}
+  windowBData: {fileID: 0}
