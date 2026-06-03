@@ -1,10 +1,8 @@
 using DG.Tweening;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine.UI;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine.EventSystems;
 
 //ウィンドウの基幹スクリプト
